@@ -366,7 +366,7 @@
         const time = document.getElementById('txtTime').value;
         const price = document.getElementById('txtPrice').innerText;
 
-        // Zorunlu alan kontrolü (Uçuş kodu da her iki taraf için eklendi)
+        // Zorunlu alan kontrolü
         if(!hotel || !room || !name || !time || !flight) { 
             alert(currentLang==='TR' ? "Lütfen Otel Adı, Oda No, Misafir Adı, Uçuş Kodu ve Tarih/Saat alanlarını eksiksiz doldurun." : "Please fill in Hotel Name, Room No, Guest Name, Flight Code and Date/Time fields."); 
             return; 
@@ -389,7 +389,8 @@
                     `💰 *${t.msgTotal}:*  ${price}\n\n` +
                     `_${t.msgConfirmed}_`;
 
-        window.open(`https://wa.me/905014712020?text=${encodeURIComponent(msg)}`, '_blank');
+        // Yönlendirme doğrudan belirtilen QR link altyapısına bağlandı
+        window.open(`https://wa.me/qr/JLSHQIXFKHIYF1?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     window.onload = function() {
