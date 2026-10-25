@@ -117,7 +117,7 @@
         <input type="text" id="txtName" placeholder="Örn: John Doe">
     </div>
 
-    <!-- Her iki yön için de Zorunlu Uçuş Kodu -->
+    <!-- Uçuş Kodu -->
     <div class="form-group" id="flightGroup">
         <label id="lblFlight">Uçuş Kodu / Flight Code (Örn: TK1982) *:</label>
         <input type="text" id="txtFlight" placeholder="Gerçek uçuş kodunu giriniz">
@@ -389,8 +389,8 @@
                     `💰 *${t.msgTotal}:*  ${price}\n\n` +
                     `_${t.msgConfirmed}_`;
 
-        // Yönlendirme doğrudan belirtilen QR link altyapısına bağlandı
-        window.open(`https://wa.me/qr/JLSHQIXFKHIYF1?text=${encodeURIComponent(msg)}`, '_blank');
+        // Yeni WhatsApp numarasına otomatik mesaj yönlendirmesi
+        window.open(`https://wa.me/905521679703?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     window.onload = function() {
