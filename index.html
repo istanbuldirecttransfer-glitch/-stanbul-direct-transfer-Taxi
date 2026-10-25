@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer & Taxi Service</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { background-color: #121212; color: #fff; padding: 15px; display: flex; justify-content: center; }
+        .container { max-width: 480px; width: 100%; background: #1e1e1e; border-radius: 12px; padding: 20px; border: 1px solid #333; position: relative; }
+        
+        /* Sağ Üst Dil Menüsü Hizalaması */
+        .menu-container { position: absolute; top: 12px; right: 12px; z-index: 999; }
+        .menu-btn { background: #262626; border: 1px solid #444; color: #fff; padding: 5px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .dropdown-content { display: none; position: absolute; right: 0; top: 32px; background: #262626; min-width: 130px; box-shadow: 0px 8px 16px rgba(0,0,0,0.6); z-index: 1000; border-radius: 6px; border: 1px solid #444; overflow: hidden; }
+        .dropdown-content button { color: #fff; padding: 10px; text-align: left; background: none; border: none; width: 100%; cursor: pointer; font-size: 12px; border-bottom: 1px solid #333; }
+        .dropdown-content button:hover { background: #f2a900; color: #121212; }
+        .show { display: block; }
+
+        /* Başlık içi çakışmayı önlemek için eklenen alan */
+        .header { text-align: center; margin-bottom: 20px; margin-top: 25px; }
+        .header h1 { color: #f2a900; font-size: 19px; margin-bottom: 5px; padding-right: 20px; padding-left: 20px; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .card { background: #262626; border: 2px solid #333; border-radius: 8px; padding: 12px; text-align: center; cursor: pointer; }
+        .card.active { border-color: #f2a900; background: #2d2612; }
+        .card img { width: 100%; height: 65px; object-fit: contain; margin-bottom: 5px; border-radius: 4px; background: #fff; padding: 2px; }
+        .card b { display: block; font-size: 14px; margin-bottom: 3px; }
+        .card span { font-size: 11px; color: #aaa; }
+        .form-group { margin-bottom: 12px; }
+        label { font-size: 12px; color: #aaa; display: block; margin-bottom: 4px; }
+        input, select { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #444; background: #121212; color: #fff; font-size: 14px; }
+        input[type="datetime-local"] { color-scheme: dark; }
+        .price-box { background: #2d2612; border: 1px solid #f2a900; padding: 12px; text-align: center; margin-top: 15px; border-radius: 6px; }
+        .price-title { font-size: 12px; color: #aaa; margin-bottom: 4px; }
+        .price-amount { font-size: 24px; color: #f2a900; font-weight: bold; }
+        .btn { background: #25D366; color: #fff; border: none; width: 100%; padding: 14px; border-radius: 25px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .note { font-size: 11px; color: #888; text-align: center; margin-top: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Sağ Üst Dil Menüsü -->
+    <div class="menu-container">
+        <button onclick="toggleMenu()" class="menu-btn" id="lblLangBtn">Language ☰</button>
+        <div id="langDropdown" class="dropdown-content">
+            <button onclick="changeLang('TR')">Türkçe</button>
+            <button onclick="changeLang('EN')">English</button>
+            <button onclick="changeLang('RU')">Русский</button>
+            <button onclick="changeLang('AR')">العربية</button>
+            <button onclick="changeLang('ES')">Español</button>
+            <button onclick="changeLang('IT')">Italiano</button>
+            <button onclick="changeLang('FR')">Français</button>
+            <button onclick="changeLang('DE')">Deutsch</button>
+            <button onclick="changeLang('ZH')">中文</button>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1 id="lblTitle">Airport Transfer & Taxi</h1>
+        <p id="lblSub" style="font-size: 12px; color: #aaa;">7/24 Secure Booking Desk</p>
+    </div>
+
+    <!-- Araç Seçimi -->
+    <div class="grid">
+        <div class="card active" id="cTaxi" onclick="setV('TAXI')">
+            <img src="egea.jpg" alt="Sarı Taksi">
+            <b id="lblTaxiName">Sarı taksi</b>
+            <span id="lblTaxiCap">Maks. 4 Kişi</span>
+        </div>
+        <div class="card" id="cVito" onclick="setV('VITO')">
+            <img src="vito.jpg" alt="Vito">
+            <b id="lblVitoName">Vito</b>
+            <span id="lblVitoCap">Maks. 7 Kişi</span>
+        </div>
+    </div>
+
+    <!-- Transfer Yönü -->
+    <div class="form-group">
+        <label id="lblDir">Transfer Yönü / Direction *:</label>
+        <select id="selDir" onchange="calc()">
+            <option value="HOTEL_TO_AP" id="optDir2">Otel ➔ Havalimanı</option>
+            <option value="AP_TO_HOTEL" id="optDir1">Havalimanı ➔ Otel (Karşılama Dahil +200₺)</option>
+        </select>
+    </div>
+
+    <!-- Havalimanı Seçimi -->
+    <div class="form-group">
+        <label id="lblAp">Havalimanı / Airport *:</label>
+        <select id="selAp" onchange="calc()">
+            <option value="IST">Istanbul Airport (IST)</option>
+            <option value="SAW">Sabiha Gokcen (SAW)</option>
+        </select>
+    </div>
+
+    <!-- Otel Bilgileri -->
+    <div class="form-group">
+        <label id="lblHotel">Otel Adı / Hotel Name *:</label>
+        <input type="text" id="txtHotel" placeholder="Örn: Karaköy Port Hotel">
+    </div>
+
+    <div class="grid">
+        <div class="form-group">
+            <label id="lblRoom">Oda No / Room No *:</label>
+            <input type="text" id="txtRoom" placeholder="Örn: 204">
+        </div>
+        <div class="form-group">
+            <label id="lblPax">Kişi Sayısı / Pax *:</label>
+            <select id="selPax"></select>
+        </div>
+    </div>
+
+    <!-- Müşteri Adı -->
+    <div class="form-group">
+        <label id="lblName">Misafir Adı Soyadı / Guest Name *:</label>
+        <input type="text" id="txtName" placeholder="Örn: John Doe">
+    </div>
+
+    <!-- Her iki yön için de Zorunlu Uçuş Kodu -->
+    <div class="form-group" id="flightGroup">
+        <label id="lblFlight">Uçuş Kodu / Flight Code (Örn: TK1982) *:</label>
+        <input type="text" id="txtFlight" placeholder="Gerçek uçuş kodunu giriniz">
+    </div>
+
+    <!-- Ödeme Şekli -->
+    <div class="form-group">
+        <label id="lblPay">Ödeme Şekli / Payment *:</label>
+        <select id="selPay" onchange="calc()">
+            <option value="CASH" id="optCash">Araçta Nakit Ödeme</option>
+            <option value="CARD" id="optCard">Araçta Kredi Kartı (+%10 Komisyon)</option>
+        </select>
+    </div>
+
+    <!-- Tarih & Saat -->
+    <div class="form-group">
+        <label id="lblTime">Transfer Tarihi & Saati / Date & Time *:</label>
+        <input type="datetime-local" id="txtTime">
+    </div>
+
+    <!-- Fiyat Gösterimi -->
+    <div class="price-box">
+        <div class="price-title" id="lblPriceTitle">HESAPLANAN TOPLAM TUTAR</div>
+        <div class="price-amount" id="txtPrice">1600 ₺</div>
+    </div>
+
+    <button class="btn" id="btnSend" onclick="send()">WHATSAPP İLE KESİN REZERVASYON GÖNDER</button>
+    <div class="note" id="lblNote">Ödeme doğrudan sürücüye araç içerisinde yapılacaktır.</div>
+</div>
+
+<script>
+    let vehicle = "TAXI";
+    let currentLang = "TR";
+
+    function toggleMenu() {
+        document.getElementById("langDropdown").classList.toggle("show");
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.menu-btn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+
+    const translations = {
+        TR: {
+            title: "Airport Transfer & Taxi", sub: "7/24 Güvenli Rezervasyon Masası",
+            taxiName: "Sarı taksi", taxiCap: "Maks. 4 Kişi", vitoName: "Vito", vitoCap: "Maks. 7 Kişi",
+            dir: "Transfer Yönü:", optDir1: "Havalimanı ➔ Otel (Karşılama Dahil +200₺)", optDir2: "Otel ➔ Havalimanı",
+            ap: "Havalimanı:", hotel: "Otel Adı:", room: "Oda No:", pax: "Kişi Sayısı:", name: "Misafir Adı Soyadı:",
+            flight: "Uçuş Kodu (Örn: TK1982) *:", pay: "Ödeme Şekli (Araçta Ödeme):", optCash: "Araçta Nakit Ödeme",
+            optCard: "Araçta Kredi Kartı (+%10 Komisyon)", time: "Transfer Tarihi & Saati:", priceTitle: "HESAPLANAN TOPLAM TUTAR",
+            btnSend: "WHATSAPP İLE KESİN REZERVASYON GÖNDER", note: "Ödeme doğrudan sürücüye araç içerisinde yapılacaktır.", paxText: "Kişi",
+            msgTitle: "🚨 YENİ TRANSFER REZERVASYONU", msgCar: "Araç", msgDir: "Yön", msgAp: "Havalimanı", msgHotel: "Otel",
+            msgGuest: "Misafir", msgFlight: "Uçuş Kodu", msgTime: "Tarih/Saat", msgPay: "Ödeme", msgTotal: "Tutar", msgConfirmed: "Müşteri tarafından onaylanmıştır."
+        },
+        EN: {
+            title: "Airport Transfer & Taxi", sub: "24/7 Secure Booking Desk",
+            taxiName: "Yellow taxi", taxiCap: "Max. 4 Persons", vitoName: "Vito", vitoCap: "Max. 7 Persons",
+            dir: "Transfer Direction:", optDir1: "Airport ➔ Hotel (Meet & Greet +200₺)", optDir2: "Hotel ➔ Airport",
+            ap: "Airport:", hotel: "Hotel Name:", room: "Room No:", pax: "Number of Pax:", name: "Guest Full Name:",
+            flight: "Flight Code (e.g. TK1982) *:", pay: "Payment Method (Pay in Car):", optCash: "Cash in Car",
+            optCard: "Credit Card in Car (+10% Commission)", time: "Transfer Date & Time:", priceTitle: "ESTIMATED TOTAL PRICE",
+            btnSend: "SEND SECURE BOOKING VIA WHATSAPP", note: "Payment will be made directly to the driver in the car.", paxText: "Persons",
+            msgTitle: "🚨 NEW TRANSFER BOOKING", msgCar: "Vehicle", msgDir: "Direction", msgAp: "Airport", msgHotel: "Hotel",
+            msgGuest: "Guest", msgFlight: "Flight Code", msgTime: "Date/Time", msgPay: "Payment", msgTotal: "Total", msgConfirmed: "Confirmed by the guest."
+        },
+        RU: {
+            title: "Трансфер и Такси", sub: "Круглосуточная служба бронирования",
+            taxiName: "Желтое такси", taxiCap: "Макс. 4 чел.", vitoName: "Vito", vitoCap: "Макс. 7 чел.",
+            dir: "Направление трансфера:", optDir1: "Аэропорт ➔ Отель (Встреча +200₺)", optDir2: "Отель ➔ Аэропорт",
+            ap: "Аэропорт:", hotel: "Название отеля:", room: "Номер комнаты:", pax: "Количество гостей:", name: "Имя Фамилия гостя:",
+            flight: "Код рейса (напр. TK1982) *:", pay: "Способ оплаты:", optCash: "Наличными водителю",
+            optCard: "Кредитной картой (+10% комиссия)", time: "Дата и время трансфера:", priceTitle: "РАССЧИТАННАЯ СУММА",
+            btnSend: "ОТПРАВИТЬ БРОНЬ В WHATSAPP", note: "Оплата производится водителю в машине.", paxText: "чел.",
+            msgTitle: "🚨 НОВОЕ БРОНИРОВАНИЕ ТРАНСФЕРА", msgCar: "Автомобиль", msgDir: "Направление", msgAp: "Аэропорт", msgHotel: "Отель",
+            msgGuest: "Гость", msgFlight: "Код рейса", msgTime: "Дата/Время", msgPay: "Оплата", msgTotal: "Итого", msgConfirmed: "Подтверждено гостем."
+        },
+        AR: {
+            title: "خدمة التوصيل", sub: "حجز مباشر آمن على مدار 24 ساعة",
+            taxiName: "تاكسي أصفر", taxiCap: "الحد الأقصى 4 أشخاص", vitoName: "فيتو", vitoCap: "الحد الأقصى 7 أشخاص",
+            dir: "اتجاه النقل:", optDir1: "المطار ➔ الفندق (شامل الاستقبال +200₺)", optDir2: "الفندق ➔ المطار",
+            ap: "المطار:", hotel: "اسم الفندق:", room: "رقم الغرفة:", pax: "عدد الأفراد:", name: "اسم الضيف بالكامل:",
+            flight: "رمز الرحلة (مثال: TK1982) *:", pay: "طريقة الدفع:", optCash: "نقداً في السيارة",
+            optCard: "بطاقة ائتمان (+10% عمولة)", time: "تاريخ ووقت النقل:", priceTitle: "السعر الإجمالي المقدر",
+            btnSend: "إرسال الحجز عبر واتساب", note: "يتم الدفع مباشرة للسائق داخل السيارة.", paxText: "أشخاص",
+            msgTitle: "🚨 حجز نقل جديد", msgCar: "المركبة", msgDir: "الأتجاه", msgAp: "المطار", msgHotel: "الفندق",
+            msgGuest: "الضيف", msgFlight: "رمز الرحلة", msgTime: "التاريخ/الوقت", msgPay: "الدفع", msgTotal: "المجموع", msgConfirmed: "تم التأكيد من قبل الضيف."
+        },
+        ES: {
+            title: "Transfer y Taxi", sub: "Servicio de reservas 24/7",
+            taxiName: "Taxi Amarillo", taxiCap: "Máx. 4 Personas", vitoName: "Vito", vitoCap: "Máx. 7 Personas",
+            dir: "Dirección:", optDir1: "Aeropuerto ➔ Hotel (Incluye Recogida +200₺)", optDir2: "Hotel ➔ Aeropuerto",
+            ap: "Aeropuerto:", hotel: "Nombre del Hotel:", room: "Núm. de Habitación:", pax: "Número de Pasajeros:", name: "Nombre Completo:",
+            flight: "Código de Vuelo (ej. TK1982) *:", pay: "Método de Pago:", optCash: "Efectivo en el auto",
+            optCard: "Tarjeta de Crédito (+10% comisión)", time: "Fecha y Hora:", priceTitle: "PRECIO TOTAL ESTIMADO",
+            btnSend: "ENVIAR RESERVA POR WHATSAPP", note: "El pago se realiza directamente al conductor.", paxText: "Personas",
+            msgTitle: "🚨 NUEVA RESERVA DE TRANSFER", msgCar: "Vehículo", msgDir: "Dirección", msgAp: "Aeropuerto", msgHotel: "Hotel",
+            msgGuest: "Huésped", msgFlight: "Vuelo", msgTime: "Fecha/Hora", msgPay: "Pago", msgTotal: "Total", msgConfirmed: "Confirmado por el huésped."
+        },
+        IT: {
+            title: "Transfer e Taxi", sub: "Servizio prenotazioni 24/7",
+            taxiName: "Taxi Giallo", taxiCap: "Max. 4 Persone", vitoName: "Vito", vitoCap: "Max. 7 Persone",
+            dir: "Direzione:", optDir1: "Aeroporto ➔ Hotel (Incontro +200₺)", optDir2: "Hotel ➔ Aeroporto",
+            ap: "Aeroporto:", hotel: "Nome Hotel:", room: "N. Camera:", pax: "Numero Passeggeri:", name: "Nome e Cognome:",
+            flight: "Codice Volo (es. TK1982) *:", pay: "Metodo di Pagamento:", optCash: "Contanti in auto",
+            optCard: "Carta di Credito (+10% commissione)", time: "Data e Ora:", priceTitle: "PREZZO TOTALE STIMATO",
+            btnSend: "INVIA PRENOTAZIONE VIA WHATSAPP", note: "Il pagamento sarà effettuato direttamente all'autista.", paxText: "Persone",
+            msgTitle: "🚨 NUOVA PRENOTAZIONE", msgCar: "Veicolo", msgDir: "Direzione", msgAp: "Aeroporto", msgHotel: "Hotel",
+            msgGuest: "Ospite", msgFlight: "Volo", msgTime: "Data/Ora", msgPay: "Pagamento", msgTotal: "Totale", msgConfirmed: "Confermato dall'ospite."
+        },
+        FR: {
+            title: "Transfert et Taxi", sub: "Service de réservation 24/7",
+            taxiName: "Taxi Jaune", taxiCap: "Max. 4 Personnes", vitoName: "Vito", vitoCap: "Max. 7 Personnes",
+            dir: "Direction:", optDir1: "Aéroport ➔ Hôtel (Accueil +200₺)", optDir2: "Hôtel ➔ Aéroport",
+            ap: "Aéroport:", hotel: "Nom de l'Hôtel:", room: "N° de Chambre:", pax: "Nombre de Passagers:", name: "Nom et Prénom:",
+            flight: "Code de Vol (ex. TK1982) *:", pay: "Mode de Paiement:", optCash: "Espèces dans la voiture",
+            optCard: "Carte de Crédit (+10% commission)", time: "Date et Heure:", priceTitle: "PRIX TOTAL ESTIMÉ",
+            btnSend: "ENVOYER LA RÉSERVATION VIA WHATSAPP", note: "Le paiement s'effectue directement auprès du chauffeur.", paxText: "Personnes",
+            msgTitle: "🚨 NOUVELLE RÉSERVATION", msgCar: "Véhicule", msgDir: "Direction", msgAp: "Aéroport", msgHotel: "Hôtel",
+            msgGuest: "Invité", msgFlight: "Vol", msgTime: "Date/Heure", msgPay: "Paiement", msgTotal: "Total", msgConfirmed: "Confirmé par l'invité."
+        },
+        DE: {
+            title: "Transfer & Taxi", sub: "24/7 Buchungsservice",
+            taxiName: "Gelbes Taxi", taxiCap: "Max. 4 Personen", vitoName: "Vito", vitoCap: "Max. 7 Personen",
+            dir: "Richtung:", optDir1: "Flughafen ➔ Hotel (Abholung +200₺)", optDir2: "Hotel ➔ Flughafen",
+            ap: "Flughafen:", hotel: "Hotelname:", room: "Zimmernummer:", pax: "Anzahl der Personen:", name: "Vollständiger Name:",
+            flight: "Flugnummer (z.B. TK1982) *:", pay: "Zahlungsmethode:", optCash: "Barzahlung im Auto",
+            optCard: "Kreditkarte (+10% Gebühr)", time: "Datum & Uhrzeit:", priceTitle: "GESAMTPREIS",
+            btnSend: "BUCHUNG PER WHATSAPP SENDEN", note: "Die Zahlung erfolgt direkt an den Fahrer.", paxText: "Personen",
+            msgTitle: "🚨 NEUE BUCHUNG", msgCar: "Fahrzeug", msgDir: "Richtung", msgAp: "Flughafen", msgHotel: "Hotel",
+            msgGuest: "Gast", msgFlight: "Flug", msgTime: "Datum/Uhrzeit", msgPay: "Zahlung", msgTotal: "Gesamt", msgConfirmed: "Vom Gast bestätigt."
+        },
+        ZH: {
+            title: "机场接送与出租车", sub: "24/7 安全预订服务",
+            taxiName: "黄色出租车", taxiCap: "最多 4 人", vitoName: "威霆", vitoCap: "最多 7 人",
+            dir: "接送方向:", optDir1: "机场 ➔ 酒店 (含接机 +200₺)", optDir2: "酒店 ➔ 机场",
+            ap: "机场:", hotel: "酒店名称:", room: "房间号:", pax: "人数:", name: "客人姓名:",
+            flight: "航班号 (例如 TK1982) *:", pay: "支付方式:", optCash: "车内现金支付",
+            optCard: "车内信用卡支付 (+10% 手续费)", time: "接送日期与时间:", priceTitle: "预计总价",
+            btnSend: "通过 WHATSAPP 发送预订", note: "车费直接支付给司机。", paxText: "人",
+            msgTitle: "🚨 新的接送预订", msgCar: "车型", msgDir: "方向", msgAp: "机场", msgHotel: "酒店",
+            msgGuest: "客人", msgFlight: "航班号", msgTime: "日期/时间", msgPay: "支付", msgTotal: "总计", msgConfirmed: "已由客人确认。"
+        }
+    };
+
+    const basePrices = {
+        TAXI: { IST: 1600, SAW: 2000 },
+        VITO: { IST: 2000, SAW: 2200 }
+    };
+
+    function changeLang(lang) {
+        currentLang = lang;
+        const t = translations[lang];
+        document.getElementById('lblTitle').innerText = t.title;
+        document.getElementById('lblSub').innerText = t.sub;
+        document.getElementById('lblTaxiName').innerText = t.taxiName;
+        document.getElementById('lblTaxiCap').innerText = t.taxiCap;
+        document.getElementById('lblVitoName').innerText = t.vitoName;
+        document.getElementById('lblVitoCap').innerText = t.vitoCap;
+        document.getElementById('lblDir').innerText = t.dir;
+        document.getElementById('optDir1').innerText = t.optDir1;
+        document.getElementById('optDir2').innerText = t.optDir2;
+        document.getElementById('lblAp').innerText = t.ap;
+        document.getElementById('lblHotel').innerText = t.hotel;
+        document.getElementById('lblRoom').innerText = t.room;
+        document.getElementById('lblPax').innerText = t.pax;
+        document.getElementById('lblName').innerText = t.name;
+        document.getElementById('lblFlight').innerText = t.flight;
+        document.getElementById('lblPay').innerText = t.pay;
+        document.getElementById('optCash').innerText = t.optCash;
+        document.getElementById('optCard').innerText = t.optCard;
+        document.getElementById('lblTime').innerText = t.time;
+        document.getElementById('lblPriceTitle').innerText = t.priceTitle;
+        document.getElementById('btnSend').innerText = t.btnSend;
+        document.getElementById('lblNote').innerText = t.note;
+
+        updatePaxOptions();
+        
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].classList.remove('show');
+        }
+    }
+
+    function updatePaxOptions() {
+        const paxSelect = document.getElementById('selPax');
+        const currentVal = paxSelect.value;
+        paxSelect.innerHTML = '';
+        const maxPax = vehicle === 'TAXI' ? 4 : 7;
+        const paxLabel = translations[currentLang].paxText;
+        for (let i = 1; i <= maxPax; i++) {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = i + " " + paxLabel;
+            paxSelect.appendChild(opt);
+        }
+        if(currentVal <= maxPax && currentVal > 0) paxSelect.value = currentVal;
+    }
+
+    function setV(type) {
+        vehicle = type;
+        document.getElementById('cTaxi').classList.toggle('active', type === 'TAXI');
+        document.getElementById('cVito').classList.toggle('active', type === 'VITO');
+        updatePaxOptions();
+        calc();
+    }
+
+    function calc() {
+        const ap = document.getElementById('selAp').value;
+        const dir = document.getElementById('selDir').value;
+        let total = basePrices[vehicle][ap];
+
+        if (dir === 'AP_TO_HOTEL') {
+            total += 200;
+        }
+
+        const pay = document.getElementById('selPay').value;
+        if (pay === 'CARD') {
+            total = total * 1.10;
+        }
+
+        document.getElementById('txtPrice').innerText = Math.round(total) + " ₺";
+    }
+
+    function send() {
+        const t = translations[currentLang];
+        const dir = document.getElementById('selDir').value;
+        const ap = document.getElementById('selAp').value === 'IST' ? 'Istanbul Airport (IST)' : 'Sabiha Gokcen (SAW)';
+        const hotel = document.getElementById('txtHotel').value.trim();
+        const room = document.getElementById('txtRoom').value.trim();
+        const pax = document.getElementById('selPax').value;
+        const name = document.getElementById('txtName').value.trim();
+        const flight = document.getElementById('txtFlight').value.trim();
+        
+        const isCard = document.getElementById('selPay').value === 'CARD';
+        const payStr = isCard ? (currentLang==='TR'?"Araçta kart":"Credit Card in Car") : (currentLang==='TR'?"Araçta Nakit":"Cash in Car");
+        const payEmoji = isCard ? "💳" : "💸";
+        
+        const time = document.getElementById('txtTime').value;
+        const price = document.getElementById('txtPrice').innerText;
+
+        // Zorunlu alan kontrolü (Uçuş kodu da her iki taraf için eklendi)
+        if(!hotel || !room || !name || !time || !flight) { 
+            alert(currentLang==='TR' ? "Lütfen Otel Adı, Oda No, Misafir Adı, Uçuş Kodu ve Tarih/Saat alanlarını eksiksiz doldurun." : "Please fill in Hotel Name, Room No, Guest Name, Flight Code and Date/Time fields."); 
+            return; 
+        }
+
+        const dirText = dir === 'AP_TO_HOTEL' ? (currentLang==='TR'?'Havalimanı ➔ Otel':'Airport ➔ Hotel') : (currentLang==='TR'?'Otel ➔ Havalimanı':'Hotel ➔ Airport');
+        
+        const vEmoji = vehicle === 'TAXI' ? '🚖' : '🚙';
+        const vName = vehicle === 'TAXI' ? (currentLang==='TR'?'Sarı taksi':'Yellow taxi') : 'Vito';
+
+        const msg = `🚨 *YENİ TRANSFER REZERVASYONU*\n\n` +
+                    `${vEmoji} *${t.msgCar}:*  ${vName}\n` +
+                    `🗺️ *${t.msgDir}:*  ${dirText}\n` +
+                    `✈️ *${t.msgAp}:*  ${ap}\n` +
+                    `🏨 *${t.msgHotel}:*  ${hotel} (Room: ${room})\n` +
+                    `👤 *${t.msgGuest}:*  ${name} (${pax} ${t.paxText})\n` +
+                    `🎫 *${t.msgFlight}:*  ${flight}\n` +
+                    `📅 *${t.msgTime}:*\n${time.replace('T', ' ')}\n` +
+                    `${payEmoji} *${t.msgPay}:* ${payStr}\n` +
+                    `💰 *${t.msgTotal}:*  ${price}\n\n` +
+                    `_${t.msgConfirmed}_`;
+
+        window.open(`https://wa.me/905014712020?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    window.onload = function() {
+        const n = new Date();
+        n.setMinutes(n.getMinutes() - n.getTimezoneOffset());
+        document.getElementById('txtTime').value = n.toISOString().slice(0, 16);
+        changeLang('TR');
+    }
+</script>
+</body>
+</html>
