@@ -270,8 +270,9 @@
         }
     };
 
+    // Güncellenmiş Sarı Taksi (IST: 1600, SAW: 1800) ve Vito fiyatları
     const basePrices = {
-        TAXI: { IST: 1600, SAW: 2000 },
+        TAXI: { IST: 1600, SAW: 1800 },
         VITO: { IST: 2000, SAW: 2200 }
     };
 
@@ -337,6 +338,7 @@
         const dir = document.getElementById('selDir').value;
         let total = basePrices[vehicle][ap];
 
+        // Karşılama dahil Havalimanı -> Otel yönünde +200₺ ekleniyor
         if (dir === 'AP_TO_HOTEL') {
             total += 200;
         }
@@ -372,7 +374,7 @@
             return; 
         }
 
-        const dirText = dir === 'AP_TO_HOTEL' ? (currentLang==='TR'?'Havalimanı ➔ Otel':'Airport ➔ Hotel') : (currentLang==='TR'?'Otel ➔ Havalimanı':'Hotel ➔ Airport');
+        const dirText = dir === 'AP_TO_HOTEL' ? (currentLang==='TR'?'Havalimanı ➔ Otel (Karşılama Dahil)':'Airport ➔ Hotel (Meet & Greet)') : (currentLang==='TR'?'Otel ➔ Havalimanı':'Hotel ➔ Airport');
         
         const vEmoji = vehicle === 'TAXI' ? '🚖' : '🚙';
         const vName = vehicle === 'TAXI' ? (currentLang==='TR'?'Sarı taksi':'Yellow taxi') : 'Vito';
@@ -389,7 +391,7 @@
                     `💰 *${t.msgTotal}:*  ${price}\n\n` +
                     `_${t.msgConfirmed}_`;
 
-        // Yeni WhatsApp numarasına otomatik mesaj yönlendirmesi
+        // Belirttiğin WhatsApp numarasına otomatik yönlendirme
         window.open(`https://wa.me/905521679703?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
@@ -398,6 +400,7 @@
         n.setMinutes(n.getMinutes() - n.getTimezoneOffset());
         document.getElementById('txtTime').value = n.toISOString().slice(0, 16);
         changeLang('TR');
+        calc();
     }
 </script>
 </body>
