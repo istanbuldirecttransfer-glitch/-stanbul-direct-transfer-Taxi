@@ -90,13 +90,11 @@
             <img src="egea.jpg" alt="Sarı Taksi">
             <b id="lblTaxiName">Sarı taksi</b>
             <span id="lblTaxiCap">Maks. 4 Kişi</span>
-            <span id="lblTaxiLugDesc" style="color: #f2a900; font-size: 10px;">(Kapasite: 3 Büyük - 5 Normal)</span>
         </div>
         <div class="card" id="cVito" onclick="setV('VITO')">
             <img src="vito.jpg" alt="Vito">
             <b id="lblVitoName">Vito</b>
             <span id="lblVitoCap">Maks. 7 Kişi</span>
-            <span id="lblVitoLugDesc" style="color: #f2a900; font-size: 10px;">(Kapasite: 8 Büyük - 10 Normal)</span>
         </div>
     </div>
 
@@ -354,7 +352,7 @@
             title: "Transfer & Taxi", sub: "24/7 Buchungsservice",
             advice: "Wir empfehlen, 12-24 Stunden im Voraus zu buchen und das Hotel mindestens 3-4 Stunden vor Ihrem Flug zu verlassen.",
             taxiName: "Gelbes Taxi", taxiCap: "Max. 4 Personen", vitoName: "Vito", vitoCap: "Max. 7 Personen",
-            dir: "Richtung:", optDir1: "Flughafen ➔ Flughafen ➔ Hotel (Abholung +200₺)", optDir2: "Hotel ➔ Flughafen",
+            dir: "Richtung:", optDir1: "Flughafen ➔ Hotel (Abholung +200₺)", optDir2: "Hotel ➔ Flughafen",
             ap: "Flughafen:", hotel: "Hotelname:", room: "Zimmernummer:", pax: "Anzahl der Personen:", guestsTitle: "Fahrgastdaten (Vollständiger Name) *:",
             bigLug: "Großes Gepäck:", normalLug: "Normales Gepäck:",
             flight: "Flugnummer (z.B. TK1982) *:", pay: "Zahlungsmethode:", optCash: "Barzahlung (TRY / USD $ / EUR €)",
@@ -445,7 +443,6 @@
         const paxCount = parseInt(document.getElementById('selPax').value) || 1;
         const container = document.getElementById('passengerContainer');
         
-        // Mevcut girilen değerleri koruyalım
         let existingValues = [];
         const inputs = container.querySelectorAll('input');
         inputs.forEach(input => existingValues.push(input.value));
@@ -503,7 +500,6 @@
         const bigLug = document.getElementById('selBigLug').value;
         const normalLug = document.getElementById('selNormalLug').value;
         
-        // Yolcu isimlerini topla
         let passengerList = [];
         for (let i = 0; i < pax; i++) {
             const val = document.getElementById('guestName_' + i)?.value.trim();
