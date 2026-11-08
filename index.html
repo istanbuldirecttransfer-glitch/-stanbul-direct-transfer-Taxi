@@ -9,9 +9,11 @@
         body { background-color: #121212; color: #fff; padding: 15px; display: flex; justify-content: center; }
         .container { max-width: 480px; width: 100%; background: #1e1e1e; border-radius: 12px; padding: 20px; border: 1px solid #333; position: relative; }
         
-        /* Sağ Üst Dil Menüsü Hizalaması */
-        .menu-container { position: absolute; top: 12px; right: 12px; z-index: 999; }
-        .menu-btn { background: #262626; border: 1px solid #444; color: #fff; padding: 5px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        /* Sağ Üst Menüler Alanı */
+        .top-controls { position: absolute; top: 12px; right: 12px; z-index: 999; display: flex; gap: 6px; align-items: center; }
+        .menu-btn, .music-btn { background: #262626; border: 1px solid #444; color: #fff; padding: 5px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .music-btn:hover, .menu-btn:hover { background: #333; border-color: #f2a900; }
+        
         .dropdown-content { display: none; position: absolute; right: 0; top: 32px; background: #262626; min-width: 130px; box-shadow: 0px 8px 16px rgba(0,0,0,0.6); z-index: 1000; border-radius: 6px; border: 1px solid #444; overflow: hidden; }
         .dropdown-content button { color: #fff; padding: 10px; text-align: left; background: none; border: none; width: 100%; cursor: pointer; font-size: 12px; border-bottom: 1px solid #333; }
         .dropdown-content button:hover { background: #f2a900; color: #121212; }
@@ -40,23 +42,26 @@
 </head>
 <body>
 
-<!-- Arka Plan Müzik Çalar (Otomatik Oynatma ve Döngü) -->
+<!-- Müzik Çalar Kaynağı -->
 <audio id="bgMusic" src="Regard-Ride-It.mp3" loop></audio>
 
 <div class="container">
-    <!-- Sağ Üst Dil Menüsü -->
-    <div class="menu-container">
-        <button onclick="toggleMenu()" class="menu-btn" id="lblLangBtn">Language ☰</button>
-        <div id="langDropdown" class="dropdown-content">
-            <button onclick="changeLang('TR')">Türkçe</button>
-            <button onclick="changeLang('EN')">English</button>
-            <button onclick="changeLang('RU')">Русский</button>
-            <button onclick="changeLang('AR')">العربية</button>
-            <button onclick="changeLang('ES')">Español</button>
-            <button onclick="changeLang('IT')">Italiano</button>
-            <button onclick="changeLang('FR')">Français</button>
-            <button onclick="changeLang('DE')">Deutsch</button>
-            <button onclick="changeLang('ZH')">中文</button>
+    <!-- Sağ Üst Kontroller (Müzik & Dil Menüsü) -->
+    <div class="top-controls">
+        <button onclick="toggleMusic()" class="music-btn" id="lblMusicBtn">🎵 Müzik: Kapalı</button>
+        <div style="position: relative;">
+            <button onclick="toggleMenu()" class="menu-btn" id="lblLangBtn">Language ☰</button>
+            <div id="langDropdown" class="dropdown-content">
+                <button onclick="changeLang('TR')">Türkçe</button>
+                <button onclick="changeLang('EN')">English</button>
+                <button onclick="changeLang('RU')">Русский</button>
+                <button onclick="changeLang('AR')">العربية</button>
+                <button onclick="changeLang('ES')">Español</button>
+                <button onclick="changeLang('IT')">Italiano</button>
+                <button onclick="changeLang('FR')">Français</button>
+                <button onclick="changeLang('DE')">Deutsch</button>
+                <button onclick="changeLang('ZH')">中文</button>
+            </div>
         </div>
     </div>
 
@@ -144,7 +149,7 @@
     <!-- Fiyat Gösterimi -->
     <div class="price-box">
         <div class="price-title" id="lblPriceTitle">HESAPLANAN TOPLAM TUTAR</div>
-        <div class="price-amount" id="txtPrice">2200 ₺</div>
+        <div class="price-amount" id="txtPrice">1600 ₺</div>
     </div>
 
     <button class="btn" id="btnSend" onclick="send()">WHATSAPP İLE KESİN REZERVASYON GÖNDER</button>
@@ -154,6 +159,25 @@
 <script>
     let vehicle = "TAXI";
     let currentLang = "TR";
+    let isMusicPlaying = false;
+
+    function toggleMusic() {
+        const music = document.getElementById('bgMusic');
+        const btn = document.getElementById('lblMusicBtn');
+        if (isMusicPlaying) {
+            music.pause();
+            isMusicPlaying = false;
+            btn.innerText = currentLang === 'TR' ? "🎵 Müzik: Kapalı" : "🎵 Music: Off";
+        } else {
+            music.volume = 0.4;
+            music.play().then(() => {
+                isMusicPlaying = true;
+                btn.innerText = currentLang === 'TR' ? "🎵 Müzik: Açık" : "🎵 Music: On";
+            }).catch(e => {
+                alert("Müzik dosyası yüklenemedi veya tarayıcı engelledi.");
+            });
+        }
+    }
 
     function toggleMenu() {
         document.getElementById("langDropdown").classList.toggle("show");
@@ -180,6 +204,7 @@
             flight: "Uçuş Kodu (Örn: TK1982) *:", pay: "Ödeme Şekli (Araçta Ödeme):", optCash: "Araçta Nakit Ödeme",
             optCard: "Araçta Kredi Kartı (+%10 Komisyon)", time: "Transfer Tarihi & Saati:", priceTitle: "HESAPLANAN TOPLAM TUTAR",
             btnSend: "WHATSAPP İLE KESİN REZERVASYON GÖNDER", note: "Ödeme doğrudan sürücüye araç içerisinde yapılacaktır.", paxText: "Kişi",
+            musicOff: "🎵 Müzik: Kapalı", musicOn: "🎵 Müzik: Açık",
             msgTitle: "🚨 YENİ TRANSFER REZERVASYONU", msgCar: "Araç", msgDir: "Yön", msgAp: "Havalimanı", msgHotel: "Otel",
             msgGuest: "Misafir", msgFlight: "Uçuş Kodu", msgTime: "Tarih/Saat", msgPay: "Ödeme", msgTotal: "Tutar", msgConfirmed: "Müşteri tarafından onaylanmıştır."
         },
@@ -191,6 +216,7 @@
             flight: "Flight Code (e.g. TK1982) *:", pay: "Payment Method (Pay in Car):", optCash: "Cash in Car",
             optCard: "Credit Card in Car (+10% Commission)", time: "Transfer Date & Time:", priceTitle: "ESTIMATED TOTAL PRICE",
             btnSend: "SEND SECURE BOOKING VIA WHATSAPP", note: "Payment will be made directly to the driver in the car.", paxText: "Persons",
+            musicOff: "🎵 Music: Off", musicOn: "🎵 Music: On",
             msgTitle: "🚨 NEW TRANSFER BOOKING", msgCar: "Vehicle", msgDir: "Direction", msgAp: "Airport", msgHotel: "Hotel",
             msgGuest: "Guest", msgFlight: "Flight Code", msgTime: "Date/Time", msgPay: "Payment", msgTotal: "Total", msgConfirmed: "Confirmed by the guest."
         },
@@ -202,6 +228,7 @@
             flight: "Код рейса (напр. TK1982) *:", pay: "Способ оплаты:", optCash: "Наличными водителю",
             optCard: "Кредитной картой (+10% комиссия)", time: "Дата и время трансфера:", priceTitle: "РАССЧИТАННАЯ СУММА",
             btnSend: "ОТПРАВИТЬ БРОНЬ В WHATSAPP", note: "Оплата производится водителю в машине.", paxText: "чел.",
+            musicOff: "🎵 Музыка: Выкл", musicOn: "🎵 Музыка: Вкл",
             msgTitle: "🚨 НОВОЕ БРОНИРОВАНИЕ ТРАНСФЕРА", msgCar: "Автомобиль", msgDir: "Направление", msgAp: "Аэропорт", msgHotel: "Отель",
             msgGuest: "Гость", msgFlight: "Код рейса", msgTime: "Дата/Время", msgPay: "Оплата", msgTotal: "Итого", msgConfirmed: "Подтверждено гостем."
         },
@@ -213,6 +240,7 @@
             flight: "رمز الرحلة (مثال: TK1982) *:", pay: "طريقة الدفع:", optCash: "نقداً في السيارة",
             optCard: "بطاقة ائتمان (+10% عمولة)", time: "تاريخ ووقت النقل:", priceTitle: "السعر الإجمالي المقدر",
             btnSend: "إرسال الحجز عبر واتساب", note: "يتم الدفع مباشرة للسائق داخل السيارة.", paxText: "أشخاص",
+            musicOff: "🎵 الموسيقى: متوقف", musicOn: "🎵 الموسيقى: تشغيل",
             msgTitle: "🚨 حجز نقل جديد", msgCar: "المركبة", msgDir: "الأتجاه", msgAp: "المطار", msgHotel: "الفندق",
             msgGuest: "الضيف", msgFlight: "رمز الرحلة", msgTime: "التاريخ/الوقت", msgPay: "الدفع", msgTotal: "المجموع", msgConfirmed: "تم التأكيد من قبل الضيف."
         },
@@ -224,6 +252,7 @@
             flight: "Código de Vuelo (ej. TK1982) *:", pay: "Método de Pago:", optCash: "Efectivo en el auto",
             optCard: "Tarjeta de Crédito (+10% comisión)", time: "Fecha y Hora:", priceTitle: "PRECIO TOTAL ESTIMADO",
             btnSend: "ENVIAR RESERVA POR WHATSAPP", note: "El pago se realiza directamente al conductor.", paxText: "Personas",
+            musicOff: "🎵 Música: Apagada", musicOn: "🎵 Música: Encendida",
             msgTitle: "🚨 NUEVA RESERVA DE TRANSFER", msgCar: "Vehículo", msgDir: "Dirección", msgAp: "Aeropuerto", msgHotel: "Hotel",
             msgGuest: "Huésped", msgFlight: "Vuelo", msgTime: "Fecha/Hora", msgPay: "Pago", msgTotal: "Total", msgConfirmed: "Confirmado por el huésped."
         },
@@ -235,6 +264,7 @@
             flight: "Codice Volo (es. TK1982) *:", pay: "Metodo di Pagamento:", optCash: "Contanti in auto",
             optCard: "Carta di Credito (+10% commissione)", time: "Data e Ora:", priceTitle: "PREZZO TOTALE STIMATO",
             btnSend: "INVIA PRENOTAZIONE VIA WHATSAPP", note: "Il pagamento sarà effettuato direttamente all'autista.", paxText: "Persone",
+            musicOff: "🎵 Musica: Spenta", musicOn: "🎵 Musica: Accesa",
             msgTitle: "🚨 NUOVA PRENOTAZIONE", msgCar: "Veicolo", msgDir: "Direzione", msgAp: "Aeroporto", msgHotel: "Hotel",
             msgGuest: "Ospite", msgFlight: "Volo", msgTime: "Data/Ora", msgPay: "Pagamento", msgTotal: "Totale", msgConfirmed: "Confermato dall'ospite."
         },
@@ -246,6 +276,7 @@
             flight: "Code de Vol (ex. TK1982) *:", pay: "Mode de Paiement:", optCash: "Espèces dans la voiture",
             optCard: "Carte de Crédit (+10% commission)", time: "Date et Heure:", priceTitle: "PRIX TOTAL ESTIMÉ",
             btnSend: "ENVOYER LA RÉSERVATION VIA WHATSAPP", note: "Le paiement s'effectue directement auprès du chauffeur.", paxText: "Personnes",
+            musicOff: "🎵 Musique: Off", musicOn: "🎵 Musique: On",
             msgTitle: "🚨 NOUVELLE RÉSERVATION", msgCar: "Véhicule", msgDir: "Direction", msgAp: "Aéroport", msgHotel: "Hôtel",
             msgGuest: "Invité", msgFlight: "Vol", msgTime: "Date/Heure", msgPay: "Paiement", msgTotal: "Total", msgConfirmed: "Confirmé par l'invité."
         },
@@ -257,6 +288,7 @@
             flight: "Flugnummer (z.B. TK1982) *:", pay: "Zahlungsmethode:", optCash: "Barzahlung im Auto",
             optCard: "Kreditkarte (+10% Gebühr)", time: "Datum & Uhrzeit:", priceTitle: "GESAMTPREIS",
             btnSend: "BUCHUNG PER WHATSAPP SENDEN", note: "Die Zahlung erfolgt direkt an den Fahrer.", paxText: "Personen",
+            musicOff: "🎵 Musik: Aus", musicOn: "🎵 Musik: An",
             msgTitle: "🚨 NEUE BUCHUNG", msgCar: "Fahrzeug", msgDir: "Richtung", msgAp: "Flughafen", msgHotel: "Hotel",
             msgGuest: "Gast", msgFlight: "Flug", msgTime: "Datum/Uhrzeit", msgPay: "Zahlung", msgTotal: "Gesamt", msgConfirmed: "Vom Gast bestätigt."
         },
@@ -268,15 +300,16 @@
             flight: "航班号 (例如 TK1982) *:", pay: "支付方式:", optCash: "车内现金支付",
             optCard: "车内信用卡支付 (+10% 手续费)", time: "接送日期与时间:", priceTitle: "预计总价",
             btnSend: "通过 WHATSAPP 发送预订", note: "车费直接支付给司机。", paxText: "人",
+            musicOff: "🎵 音乐: 关闭", musicOn: "🎵 音乐: 开启",
             msgTitle: "🚨 新的接送预订", msgCar: "车型", msgDir: "方向", msgAp: "机场", msgHotel: "酒店",
             msgGuest: "客人", msgFlight: "航班号", msgTime: "日期/时间", msgPay: "支付", msgTotal: "总计", msgConfirmed: "已由客人确认。"
         }
     };
 
-    // Güncellenmiş nakit bazlı fiyatlar: IST 2200₺, SAW 2500₺ (Hem Taksi hem Vito için eşitlendi)
+    // İstenen fiyatlar: IST nakit 1600₺, SAW nakit 1800₺ (Taksi ve Vito için güncellendi)
     const basePrices = {
-        TAXI: { IST: 2200, SAW: 2500 },
-        VITO: { IST: 2200, SAW: 2500 }
+        TAXI: { IST: 1600, SAW: 1800 },
+        VITO: { IST: 1600, SAW: 1800 }
     };
 
     function changeLang(lang) {
@@ -304,6 +337,9 @@
         document.getElementById('lblPriceTitle').innerText = t.priceTitle;
         document.getElementById('btnSend').innerText = t.btnSend;
         document.getElementById('lblNote').innerText = t.note;
+
+        // Müzik buton yazısını dile göre güncelle
+        document.getElementById('lblMusicBtn').innerText = isMusicPlaying ? t.musicOn : t.musicOff;
 
         updatePaxOptions();
         
@@ -401,17 +437,6 @@
         const n = new Date();
         n.setMinutes(n.getMinutes() - n.getTimezoneOffset());
         document.getElementById('txtTime').value = n.toISOString().slice(0, 16);
-        
-        // Sayfa yüklendiğinde müziği çalmayı dene (Tarayıcı izin politikalarına takılırsa kullanıcı herhangi bir yere tıkladığında çalmaya başlar)
-        const bgMusic = document.getElementById('bgMusic');
-        bgMusic.volume = 0.4; // Ses seviyesi dengeli olsun
-        bgMusic.play().catch(error => {
-            console.log("Tarayıcı otomatik oynatmayı engelledi, ilk etkileşimde çalacak.");
-            document.addEventListener('click', () => {
-                bgMusic.play();
-            }, { once: true });
-        });
-
         changeLang('TR');
         calc();
     }
