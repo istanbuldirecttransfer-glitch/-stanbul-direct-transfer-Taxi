@@ -6,10 +6,21 @@
     <title>Transfer & Taxi Service</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-        body { background-color: #121212; color: #fff; padding: 15px; display: flex; justify-content: center; }
-        .container { max-width: 480px; width: 100%; background: #1e1e1e; border-radius: 12px; padding: 20px; border: 1px solid #333; position: relative; }
         
-        /* Sağ Üst Menüler Alanı */
+        /* Sayfa Arka Planı (Gönderdiğin görsel ile güncellendi) */
+        body { 
+            background: url('33547.jpg') no-repeat center center fixed; 
+            background-size: cover; 
+            color: #fff; 
+            padding: 15px; 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh;
+        }
+
+        .container { max-width: 480px; width: 100%; background: rgba(30, 30, 30, 0.92); backdrop-filter: blur(8px); border-radius: 12px; padding: 20px; border: 1px solid #444; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+        
+        /* Sağ Üst Kontroller (Müzik & Dil Menüsü) */
         .top-controls { position: absolute; top: 12px; right: 12px; z-index: 999; display: flex; gap: 6px; align-items: center; }
         .menu-btn, .music-btn { background: #262626; border: 1px solid #444; color: #fff; padding: 5px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .music-btn:hover, .menu-btn:hover { background: #333; border-color: #f2a900; }
@@ -19,7 +30,7 @@
         .dropdown-content button:hover { background: #f2a900; color: #121212; }
         .show { display: block; }
 
-        /* Başlık içi çakışmayı önlemek için eklenen alan */
+        /* Başlık alanı */
         .header { text-align: center; margin-bottom: 20px; margin-top: 25px; }
         .header h1 { color: #f2a900; font-size: 19px; margin-bottom: 5px; padding-right: 20px; padding-left: 20px; }
         
@@ -42,8 +53,8 @@
 </head>
 <body>
 
-<!-- Müzik Çalar Kaynağı -->
-<audio id="bgMusic" src="Regard-Ride-It.mp3" loop></audio>
+<!-- Müzik Çalar Kaynağı (Eminem şarkısı eklendi) -->
+<audio id="bgMusic" src="Eminem-Not_Afra.mp3" loop></audio>
 
 <div class="container">
     <!-- Sağ Üst Kontroller (Müzik & Dil Menüsü) -->
@@ -306,7 +317,7 @@
         }
     };
 
-    // İstenen fiyatlar: IST nakit 1600₺, SAW nakit 1800₺ (Taksi ve Vito için güncellendi)
+    // Fiyatlar: İst nakit 1600, Sabiha nakit 1800 olarak ayarlandı
     const basePrices = {
         TAXI: { IST: 1600, SAW: 1800 },
         VITO: { IST: 1600, SAW: 1800 }
@@ -338,7 +349,6 @@
         document.getElementById('btnSend').innerText = t.btnSend;
         document.getElementById('lblNote').innerText = t.note;
 
-        // Müzik buton yazısını dile göre güncelle
         document.getElementById('lblMusicBtn').innerText = isMusicPlaying ? t.musicOn : t.musicOff;
 
         updatePaxOptions();
@@ -377,7 +387,6 @@
         const dir = document.getElementById('selDir').value;
         let total = basePrices[vehicle][ap];
 
-        // Karşılama dahil Havalimanı -> Otel yönünde +200₺ ekleniyor
         if (dir === 'AP_TO_HOTEL') {
             total += 200;
         }
@@ -407,7 +416,6 @@
         const time = document.getElementById('txtTime').value;
         const price = document.getElementById('txtPrice').innerText;
 
-        // Zorunlu alan kontrolü
         if(!hotel || !room || !name || !time || !flight) { 
             alert(currentLang==='TR' ? "Lütfen Otel Adı, Oda No, Misafir Adı, Uçuş Kodu ve Tarih/Saat alanlarını eksiksiz doldurun." : "Please fill in Hotel Name, Room No, Guest Name, Flight Code and Date/Time fields."); 
             return; 
