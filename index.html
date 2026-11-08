@@ -7,7 +7,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
         
-        /* Sayfa Arka Planı (Gönderdiğin görsel ile güncellendi) */
+        /* Sayfa Arka Planı (Gönderdiğin görsel) */
         body { 
             background: url('33547.jpg') no-repeat center center fixed; 
             background-size: cover; 
@@ -42,8 +42,9 @@
         .card span { font-size: 11px; color: #aaa; }
         .form-group { margin-bottom: 12px; }
         label { font-size: 12px; color: #aaa; display: block; margin-bottom: 4px; }
-        input, select { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #444; background: #121212; color: #fff; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #444; background: #121212; color: #fff; font-size: 14px; }
         input[type="datetime-local"] { color-scheme: dark; }
+        textarea { resize: vertical; height: 70px; }
         .price-box { background: #2d2612; border: 1px solid #f2a900; padding: 12px; text-align: center; margin-top: 15px; border-radius: 6px; }
         .price-title { font-size: 12px; color: #aaa; margin-bottom: 4px; }
         .price-amount { font-size: 24px; color: #f2a900; font-weight: bold; }
@@ -53,7 +54,7 @@
 </head>
 <body>
 
-<!-- Müzik Çalar Kaynağı (Eminem şarkısı eklendi) -->
+<!-- Müzik Çalar Kaynağı (Eminem şarkısı) -->
 <audio id="bgMusic" src="Eminem-Not_Afra.mp3" loop></audio>
 
 <div class="container">
@@ -142,11 +143,11 @@
         <input type="text" id="txtFlight" placeholder="Gerçek uçuş kodunu giriniz">
     </div>
 
-    <!-- Ödeme Şekli -->
+    <!-- Ödeme Şekli (Döviz Bilgisi Eklendi) -->
     <div class="form-group">
         <label id="lblPay">Ödeme Şekli / Payment *:</label>
         <select id="selPay" onchange="calc()">
-            <option value="CASH" id="optCash">Araçta Nakit Ödeme</option>
+            <option value="CASH" id="optCash">Araçta Nakit Ödeme (TL / USD $ / EUR €)</option>
             <option value="CARD" id="optCard">Araçta Kredi Kartı (+%10 Komisyon)</option>
         </select>
     </div>
@@ -157,6 +158,12 @@
         <input type="datetime-local" id="txtTime">
     </div>
 
+    <!-- Özel Not / Talep Alanı -->
+    <div class="form-group">
+        <label id="lblNoteInput">Özel İstek / Notlar (Opsiyonel):</label>
+        <textarea id="txtExtra" placeholder="Örn: Çok fazla bagajımız var / Bebek koltuğu gerekli..."></textarea>
+    </div>
+
     <!-- Fiyat Gösterimi -->
     <div class="price-box">
         <div class="price-title" id="lblPriceTitle">HESAPLANAN TOPLAM TUTAR</div>
@@ -164,7 +171,7 @@
     </div>
 
     <button class="btn" id="btnSend" onclick="send()">WHATSAPP İLE KESİN REZERVASYON GÖNDER</button>
-    <div class="note" id="lblNote">Ödeme doğrudan sürücüye araç içerisinde yapılacaktır.</div>
+    <div class="note" id="lblNote">Ödeme doğrudan sürücüye araç içerisinde yapılacaktır. (Nakit olarak TL, Dolar veya Euro geçerlidir).</div>
 </div>
 
 <script>
@@ -212,112 +219,111 @@
             taxiName: "Sarı taksi", taxiCap: "Maks. 4 Kişi", vitoName: "Vito", vitoCap: "Maks. 7 Kişi",
             dir: "Transfer Yönü:", optDir1: "Havalimanı ➔ Otel (Karşılama Dahil +200₺)", optDir2: "Otel ➔ Havalimanı",
             ap: "Havalimanı:", hotel: "Otel Adı:", room: "Oda No:", pax: "Kişi Sayısı:", name: "Misafir Adı Soyadı:",
-            flight: "Uçuş Kodu (Örn: TK1982) *:", pay: "Ödeme Şekli (Araçta Ödeme):", optCash: "Araçta Nakit Ödeme",
-            optCard: "Araçta Kredi Kartı (+%10 Komisyon)", time: "Transfer Tarihi & Saati:", priceTitle: "HESAPLANAN TOPLAM TUTAR",
-            btnSend: "WHATSAPP İLE KESİN REZERVASYON GÖNDER", note: "Ödeme doğrudan sürücüye araç içerisinde yapılacaktır.", paxText: "Kişi",
+            flight: "Uçuş Kodu (Örn: TK1982) *:", pay: "Ödeme Şekli (Araçta Ödeme):", optCash: "Araçta Nakit Ödeme (TL / USD $ / EUR €)",
+            optCard: "Araçta Kredi Kartı (+%10 Komisyon)", time: "Transfer Tarihi & Saati:", noteInput: "Özel İstek / Notlar (Opsiyonel):", priceTitle: "HESAPLANAN TOPLAM TUTAR",
+            btnSend: "WHATSAPP İLE KESİN REZERVASYON GÖNDER", note: "Ödeme doğrudan sürücüye araç içerisinde yapılacaktır. (TL, USD, EUR geçerlidir).", paxText: "Kişi",
             musicOff: "🎵 Müzik: Kapalı", musicOn: "🎵 Müzik: Açık",
             msgTitle: "🚨 YENİ TRANSFER REZERVASYONU", msgCar: "Araç", msgDir: "Yön", msgAp: "Havalimanı", msgHotel: "Otel",
-            msgGuest: "Misafir", msgFlight: "Uçuş Kodu", msgTime: "Tarih/Saat", msgPay: "Ödeme", msgTotal: "Tutar", msgConfirmed: "Müşteri tarafından onaylanmıştır."
+            msgGuest: "Misafir", msgFlight: "Uçuş Kodu", msgTime: "Tarih/Saat", msgPay: "Ödeme", msgExtra: "Not", msgTotal: "Tutar", msgConfirmed: "Müşteri tarafından onaylanmıştır."
         },
         EN: {
             title: "Airport Transfer & Taxi", sub: "24/7 Secure Booking Desk",
             taxiName: "Yellow taxi", taxiCap: "Max. 4 Persons", vitoName: "Vito", vitoCap: "Max. 7 Persons",
             dir: "Transfer Direction:", optDir1: "Airport ➔ Hotel (Meet & Greet +200₺)", optDir2: "Hotel ➔ Airport",
             ap: "Airport:", hotel: "Hotel Name:", room: "Room No:", pax: "Number of Pax:", name: "Guest Full Name:",
-            flight: "Flight Code (e.g. TK1982) *:", pay: "Payment Method (Pay in Car):", optCash: "Cash in Car",
-            optCard: "Credit Card in Car (+10% Commission)", time: "Transfer Date & Time:", priceTitle: "ESTIMATED TOTAL PRICE",
-            btnSend: "SEND SECURE BOOKING VIA WHATSAPP", note: "Payment will be made directly to the driver in the car.", paxText: "Persons",
+            flight: "Flight Code (e.g. TK1982) *:", pay: "Payment Method (Pay in Car):", optCash: "Cash in Car (TRY / USD $ / EUR €)",
+            optCard: "Credit Card in Car (+10% Commission)", time: "Transfer Date & Time:", noteInput: "Special Request / Notes (Optional):", priceTitle: "ESTIMATED TOTAL PRICE",
+            btnSend: "SEND SECURE BOOKING VIA WHATSAPP", note: "Payment directly to driver (TRY, USD, EUR accepted).", paxText: "Persons",
             musicOff: "🎵 Music: Off", musicOn: "🎵 Music: On",
             msgTitle: "🚨 NEW TRANSFER BOOKING", msgCar: "Vehicle", msgDir: "Direction", msgAp: "Airport", msgHotel: "Hotel",
-            msgGuest: "Guest", msgFlight: "Flight Code", msgTime: "Date/Time", msgPay: "Payment", msgTotal: "Total", msgConfirmed: "Confirmed by the guest."
+            msgGuest: "Guest", msgFlight: "Flight Code", msgTime: "Date/Time", msgPay: "Payment", msgExtra: "Note", msgTotal: "Total", msgConfirmed: "Confirmed by the guest."
         },
         RU: {
             title: "Трансфер и Такси", sub: "Круглосуточная служба бронирования",
             taxiName: "Желтое такси", taxiCap: "Макс. 4 чел.", vitoName: "Vito", vitoCap: "Макс. 7 чел.",
             dir: "Направление трансфера:", optDir1: "Аэропорт ➔ Отель (Встреча +200₺)", optDir2: "Отель ➔ Аэропорт",
             ap: "Аэропорт:", hotel: "Название отеля:", room: "Номер комнаты:", pax: "Количество гостей:", name: "Имя Фамилия гостя:",
-            flight: "Код рейса (напр. TK1982) *:", pay: "Способ оплаты:", optCash: "Наличными водителю",
-            optCard: "Кредитной картой (+10% комиссия)", time: "Дата и время трансфера:", priceTitle: "РАССЧИТАННАЯ СУММА",
-            btnSend: "ОТПРАВИТЬ БРОНЬ В WHATSAPP", note: "Оплата производится водителю в машине.", paxText: "чел.",
+            flight: "Код рейса (напр. TK1982) *:", pay: "Способ оплаты:", optCash: "Наличными (TRY / USD $ / EUR €)",
+            optCard: "Кредитной картой (+10% комиссия)", time: "Дата и время трансфера:", noteInput: "Особые пожелания (необязательно):", priceTitle: "РАССЧИТАННАЯ СУММА",
+            btnSend: "ОТПРАВИТЬ БРОНЬ В WHATSAPP", note: "Оплата водителю (принимаются TRY, USD, EUR).", paxText: "чел.",
             musicOff: "🎵 Музыка: Выкл", musicOn: "🎵 Музыка: Вкл",
             msgTitle: "🚨 НОВОЕ БРОНИРОВАНИЕ ТРАНСФЕРА", msgCar: "Автомобиль", msgDir: "Направление", msgAp: "Аэропорт", msgHotel: "Отель",
-            msgGuest: "Гость", msgFlight: "Код рейса", msgTime: "Дата/Время", msgPay: "Оплата", msgTotal: "Итого", msgConfirmed: "Подтверждено гостем."
+            msgGuest: "Гость", msgFlight: "Код рейса", msgTime: "Дата/Время", msgPay: "Оплата", msgExtra: "Примечание", msgTotal: "Итого", msgConfirmed: "Подтверждено гостем."
         },
         AR: {
             title: "خدمة التوصيل", sub: "حجز مباشر آمن على مدار 24 ساعة",
             taxiName: "تاكسي أصفر", taxiCap: "الحد الأقصى 4 أشخاص", vitoName: "فيتو", vitoCap: "الحد الأقصى 7 أشخاص",
             dir: "اتجاه النقل:", optDir1: "المطار ➔ الفندق (شامل الاستقبال +200₺)", optDir2: "الفندق ➔ المطار",
             ap: "المطار:", hotel: "اسم الفندق:", room: "رقم الغرفة:", pax: "عدد الأفراد:", name: "اسم الضيف بالكامل:",
-            flight: "رمز الرحلة (مثال: TK1982) *:", pay: "طريقة الدفع:", optCash: "نقداً في السيارة",
-            optCard: "بطاقة ائتمان (+10% عمولة)", time: "تاريخ ووقت النقل:", priceTitle: "السعر الإجمالي المقدر",
-            btnSend: "إرسال الحجز عبر واتساب", note: "يتم الدفع مباشرة للسائق داخل السيارة.", paxText: "أشخاص",
+            flight: "رمز الرحلة (مثال: TK1982) *:", pay: "طريقة الدفع:", optCash: "نقداً في السيارة (TRY / USD $ / EUR €)",
+            optCard: "بطاقة ائتمان (+10% عمولة)", time: "تاريخ ووقت النقل:", noteInput: "طلبات خاصة (اختياري):", priceTitle: "السعر الإجمالي المقدر",
+            btnSend: "إرسال الحجز عبر واتساب", note: "الدفع للسائق (يقبل العملات الأجنبية الدولار واليورو).", paxText: "أشخاص",
             musicOff: "🎵 الموسيقى: متوقف", musicOn: "🎵 الموسيقى: تشغيل",
             msgTitle: "🚨 حجز نقل جديد", msgCar: "المركبة", msgDir: "الأتجاه", msgAp: "المطار", msgHotel: "الفندق",
-            msgGuest: "الضيف", msgFlight: "رمز الرحلة", msgTime: "التاريخ/الوقت", msgPay: "الدفع", msgTotal: "المجموع", msgConfirmed: "تم التأكيد من قبل الضيف."
+            msgGuest: "الضيف", msgFlight: "رمز الرحلة", msgTime: "التاريخ/الوقت", msgPay: "الدفع", msgExtra: "ملاحظة", msgTotal: "المجموع", msgConfirmed: "تم التأكيد من قبل الضيف."
         },
         ES: {
             title: "Transfer y Taxi", sub: "Servicio de reservas 24/7",
             taxiName: "Taxi Amarillo", taxiCap: "Máx. 4 Personas", vitoName: "Vito", vitoCap: "Máx. 7 Personas",
             dir: "Dirección:", optDir1: "Aeropuerto ➔ Hotel (Incluye Recogida +200₺)", optDir2: "Hotel ➔ Aeropuerto",
             ap: "Aeropuerto:", hotel: "Nombre del Hotel:", room: "Núm. de Habitación:", pax: "Número de Pasajeros:", name: "Nombre Completo:",
-            flight: "Código de Vuelo (ej. TK1982) *:", pay: "Método de Pago:", optCash: "Efectivo en el auto",
-            optCard: "Tarjeta de Crédito (+10% comisión)", time: "Fecha y Hora:", priceTitle: "PRECIO TOTAL ESTIMADO",
-            btnSend: "ENVIAR RESERVA POR WHATSAPP", note: "El pago se realiza directamente al conductor.", paxText: "Personas",
+            flight: "Código de Vuelo (ej. TK1982) *:", pay: "Método de Pago:", optCash: "Efectivo (TRY / USD $ / EUR €)",
+            optCard: "Tarjeta de Crédito (+10% comisión)", time: "Fecha y Hora:", noteInput: "Nota especial (Opcional):", priceTitle: "PRECIO TOTAL ESTIMADO",
+            btnSend: "ENVIAR RESERVA POR WHATSAPP", note: "Pago al conductor (Se acepta TRY, USD, EUR).", paxText: "Personas",
             musicOff: "🎵 Música: Apagada", musicOn: "🎵 Música: Encendida",
             msgTitle: "🚨 NUEVA RESERVA DE TRANSFER", msgCar: "Vehículo", msgDir: "Dirección", msgAp: "Aeropuerto", msgHotel: "Hotel",
-            msgGuest: "Huésped", msgFlight: "Vuelo", msgTime: "Fecha/Hora", msgPay: "Pago", msgTotal: "Total", msgConfirmed: "Confirmado por el huésped."
+            msgGuest: "Huésped", msgFlight: "Vuelo", msgTime: "Fecha/Hora", msgPay: "Pago", msgExtra: "Nota", msgTotal: "Total", msgConfirmed: "Confirmado por el huésped."
         },
         IT: {
             title: "Transfer e Taxi", sub: "Servizio prenotazioni 24/7",
             taxiName: "Taxi Giallo", taxiCap: "Max. 4 Persone", vitoName: "Vito", vitoCap: "Max. 7 Persone",
             dir: "Direzione:", optDir1: "Aeroporto ➔ Hotel (Incontro +200₺)", optDir2: "Hotel ➔ Aeroporto",
             ap: "Aeroporto:", hotel: "Nome Hotel:", room: "N. Camera:", pax: "Numero Passeggeri:", name: "Nome e Cognome:",
-            flight: "Codice Volo (es. TK1982) *:", pay: "Metodo di Pagamento:", optCash: "Contanti in auto",
-            optCard: "Carta di Credito (+10% commissione)", time: "Data e Ora:", priceTitle: "PREZZO TOTALE STIMATO",
-            btnSend: "INVIA PRENOTAZIONE VIA WHATSAPP", note: "Il pagamento sarà effettuato direttamente all'autista.", paxText: "Persone",
+            flight: "Codice Volo (es. TK1982) *:", pay: "Metodo di Pagamento:", optCash: "Contanti (TRY / USD $ / EUR €)",
+            optCard: "Carta di Credito (+10% commissione)", time: "Data e Ora:", noteInput: "Note speciali (Opzionale):", priceTitle: "PREZZO TOTALE STIMATO",
+            btnSend: "INVIA PRENOTAZIONE VIA WHATSAPP", note: "Pagamento all'autista (Accettati TRY, USD, EUR).", paxText: "Persone",
             musicOff: "🎵 Musica: Spenta", musicOn: "🎵 Musica: Accesa",
             msgTitle: "🚨 NUOVA PRENOTAZIONE", msgCar: "Veicolo", msgDir: "Direzione", msgAp: "Aeroporto", msgHotel: "Hotel",
-            msgGuest: "Ospite", msgFlight: "Volo", msgTime: "Data/Ora", msgPay: "Pagamento", msgTotal: "Totale", msgConfirmed: "Confermato dall'ospite."
+            msgGuest: "Ospite", msgFlight: "Volo", msgTime: "Data/Ora", msgPay: "Pagamento", msgExtra: "Nota", msgTotal: "Totale", msgConfirmed: "Confermato dall'ospite."
         },
         FR: {
             title: "Transfert et Taxi", sub: "Service de réservation 24/7",
             taxiName: "Taxi Jaune", taxiCap: "Max. 4 Personnes", vitoName: "Vito", vitoCap: "Max. 7 Personnes",
             dir: "Direction:", optDir1: "Aéroport ➔ Hôtel (Accueil +200₺)", optDir2: "Hôtel ➔ Aéroport",
             ap: "Aéroport:", hotel: "Nom de l'Hôtel:", room: "N° de Chambre:", pax: "Nombre de Passagers:", name: "Nom et Prénom:",
-            flight: "Code de Vol (ex. TK1982) *:", pay: "Mode de Paiement:", optCash: "Espèces dans la voiture",
-            optCard: "Carte de Crédit (+10% commission)", time: "Date et Heure:", priceTitle: "PRIX TOTAL ESTIMÉ",
-            btnSend: "ENVOYER LA RÉSERVATION VIA WHATSAPP", note: "Le paiement s'effectue directement auprès du chauffeur.", paxText: "Personnes",
+            flight: "Code de Vol (ex. TK1982) *:", pay: "Mode de Paiement:", optCash: "Espèces (TRY / USD $ / EUR €)",
+            optCard: "Carte de Crédit (+10% commission)", time: "Date et Heure:", noteInput: "Note spéciale (Optionnel):", priceTitle: "PRIX TOTAL ESTIMÉ",
+            btnSend: "ENVOYER LA RÉSERVATION VIA WHATSAPP", note: "Paiement au chauffeur (TRY, USD, EUR acceptés).", paxText: "Personnes",
             musicOff: "🎵 Musique: Off", musicOn: "🎵 Musique: On",
             msgTitle: "🚨 NOUVELLE RÉSERVATION", msgCar: "Véhicule", msgDir: "Direction", msgAp: "Aéroport", msgHotel: "Hôtel",
-            msgGuest: "Invité", msgFlight: "Vol", msgTime: "Date/Heure", msgPay: "Paiement", msgTotal: "Total", msgConfirmed: "Confirmé par l'invité."
+            msgGuest: "Invité", msgFlight: "Vol", msgTime: "Date/Heure", msgPay: "Paiement", msgExtra: "Remarque", msgTotal: "Total", msgConfirmed: "Confirmé par l'invité."
         },
         DE: {
             title: "Transfer & Taxi", sub: "24/7 Buchungsservice",
             taxiName: "Gelbes Taxi", taxiCap: "Max. 4 Personen", vitoName: "Vito", vitoCap: "Max. 7 Personen",
             dir: "Richtung:", optDir1: "Flughafen ➔ Hotel (Abholung +200₺)", optDir2: "Hotel ➔ Flughafen",
             ap: "Flughafen:", hotel: "Hotelname:", room: "Zimmernummer:", pax: "Anzahl der Personen:", name: "Vollständiger Name:",
-            flight: "Flugnummer (z.B. TK1982) *:", pay: "Zahlungsmethode:", optCash: "Barzahlung im Auto",
-            optCard: "Kreditkarte (+10% Gebühr)", time: "Datum & Uhrzeit:", priceTitle: "GESAMTPREIS",
-            btnSend: "BUCHUNG PER WHATSAPP SENDEN", note: "Die Zahlung erfolgt direkt an den Fahrer.", paxText: "Personen",
+            flight: "Flugnummer (z.B. TK1982) *:", pay: "Zahlungsmethode:", optCash: "Barzahlung (TRY / USD $ / EUR €)",
+            optCard: "Kreditkarte (+10% Gebühr)", time: "Datum & Uhrzeit:", noteInput: "Besondere Wünsche (Optional):", priceTitle: "GESAMTPREIS",
+            btnSend: "BUCHUNG PER WHATSAPP SENDEN", note: "Zahlung an den Fahrer (TRY, USD, EUR möglich).", paxText: "Personen",
             musicOff: "🎵 Musik: Aus", musicOn: "🎵 Musik: An",
             msgTitle: "🚨 NEUE BUCHUNG", msgCar: "Fahrzeug", msgDir: "Richtung", msgAp: "Flughafen", msgHotel: "Hotel",
-            msgGuest: "Gast", msgFlight: "Flug", msgTime: "Datum/Uhrzeit", msgPay: "Zahlung", msgTotal: "Gesamt", msgConfirmed: "Vom Gast bestätigt."
+            msgGuest: "Gast", msgFlight: "Flug", msgTime: "Datum/Uhrzeit", msgPay: "Zahlung", msgExtra: "Notiz", msgTotal: "Gesamt", msgConfirmed: "Vom Gast bestätigt."
         },
         ZH: {
             title: "机场接送与出租车", sub: "24/7 安全预订服务",
             taxiName: "黄色出租车", taxiCap: "最多 4 人", vitoName: "威霆", vitoCap: "最多 7 人",
             dir: "接送方向:", optDir1: "机场 ➔ 酒店 (含接机 +200₺)", optDir2: "酒店 ➔ 机场",
             ap: "机场:", hotel: "酒店名称:", room: "房间号:", pax: "人数:", name: "客人姓名:",
-            flight: "航班号 (例如 TK1982) *:", pay: "支付方式:", optCash: "车内现金支付",
-            optCard: "车内信用卡支付 (+10% 手续费)", time: "接送日期与时间:", priceTitle: "预计总价",
-            btnSend: "通过 WHATSAPP 发送预订", note: "车费直接支付给司机。", paxText: "人",
+            flight: "航班号 (例如 TK1982) *:", pay: "支付方式:", optCash: "车内现金 (支持 TRY / USD $ / EUR €)",
+            optCard: "车内信用卡支付 (+10% 手续费)", time: "接送日期与时间:", noteInput: "特殊要求 / 备注 (可选):", priceTitle: "预计总价",
+            btnSend: "通过 WHATSAPP 发送预订", note: "直接付给司机 (支持 TL, 美元, 欧元)。", paxText: "人",
             musicOff: "🎵 音乐: 关闭", musicOn: "🎵 音乐: 开启",
             msgTitle: "🚨 新的接送预订", msgCar: "车型", msgDir: "方向", msgAp: "机场", msgHotel: "酒店",
-            msgGuest: "客人", msgFlight: "航班号", msgTime: "日期/时间", msgPay: "支付", msgTotal: "总计", msgConfirmed: "已由客人确认。"
+            msgGuest: "客人", msgFlight: "航班号", msgTime: "日期/时间", msgPay: "支付", msgExtra: "备注", msgTotal: "总计", msgConfirmed: "已由客人确认。"
         }
     };
 
-    // Fiyatlar: İst nakit 1600, Sabiha nakit 1800 olarak ayarlandı
     const basePrices = {
         TAXI: { IST: 1600, SAW: 1800 },
         VITO: { IST: 1600, SAW: 1800 }
@@ -345,6 +351,7 @@
         document.getElementById('optCash').innerText = t.optCash;
         document.getElementById('optCard').innerText = t.optCard;
         document.getElementById('lblTime').innerText = t.time;
+        document.getElementById('lblNoteInput').innerText = t.noteInput;
         document.getElementById('lblPriceTitle').innerText = t.priceTitle;
         document.getElementById('btnSend').innerText = t.btnSend;
         document.getElementById('lblNote').innerText = t.note;
@@ -408,9 +415,10 @@
         const pax = document.getElementById('selPax').value;
         const name = document.getElementById('txtName').value.trim();
         const flight = document.getElementById('txtFlight').value.trim();
+        const extraNote = document.getElementById('txtExtra').value.trim();
         
         const isCard = document.getElementById('selPay').value === 'CARD';
-        const payStr = isCard ? (currentLang==='TR'?"Araçta kart":"Credit Card in Car") : (currentLang==='TR'?"Araçta Nakit":"Cash in Car");
+        const payStr = isCard ? (currentLang==='TR'?"Araçta kart (+%10)":"Credit Card in Car") : (currentLang==='TR'?"Araçta Nakit (TL / USD / EUR)":"Cash (TRY / USD / EUR)");
         const payEmoji = isCard ? "💳" : "💸";
         
         const time = document.getElementById('txtTime').value;
@@ -426,17 +434,22 @@
         const vEmoji = vehicle === 'TAXI' ? '🚖' : '🚙';
         const vName = vehicle === 'TAXI' ? (currentLang==='TR'?'Sarı taksi':'Yellow taxi') : 'Vito';
 
-        const msg = `🚨 *YENİ TRANSFER REZERVASYONU*\n\n` +
-                    `${vEmoji} *${t.msgCar}:*  ${vName}\n` +
-                    `🗺️ *${t.msgDir}:*  ${dirText}\n` +
-                    `✈️ *${t.msgAp}:*  ${ap}\n` +
-                    `🏨 *${t.msgHotel}:*  ${hotel} (Room: ${room})\n` +
-                    `👤 *${t.msgGuest}:*  ${name} (${pax} ${t.paxText})\n` +
-                    `🎫 *${t.msgFlight}:*  ${flight}\n` +
-                    `📅 *${t.msgTime}:*\n${time.replace('T', ' ')}\n` +
-                    `${payEmoji} *${t.msgPay}:* ${payStr}\n` +
-                    `💰 *${t.msgTotal}:*  ${price}\n\n` +
-                    `_${t.msgConfirmed}_`;
+        let msg = `🚨 *YENİ TRANSFER REZERVASYONU*\n\n` +
+                  `${vEmoji} *${t.msgCar}:*  ${vName}\n` +
+                  `🗺️ *${t.msgDir}:*  ${dirText}\n` +
+                  `✈️ *${t.msgAp}:*  ${ap}\n` +
+                  `🏨 *${t.msgHotel}:*  ${hotel} (Room: ${room})\n` +
+                  `👤 *${t.msgGuest}:*  ${name} (${pax} ${t.paxText})\n` +
+                  `🎫 *${t.msgFlight}:*  ${flight}\n` +
+                  `📅 *${t.msgTime}:*\n${time.replace('T', ' ')}\n` +
+                  `${payEmoji} *${t.msgPay}:* ${payStr}\n`;
+                  
+        if(extraNote) {
+            msg += `📝 *${t.msgExtra}:* ${extraNote}\n`;
+        }
+
+        msg += `💰 *${t.msgTotal}:*  ${price}\n\n` +
+               `_${t.msgConfirmed}_`;
 
         window.open(`https://wa.me/905521679703?text=${encodeURIComponent(msg)}`, '_blank');
     }
