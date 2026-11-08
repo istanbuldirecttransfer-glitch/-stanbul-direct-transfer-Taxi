@@ -39,7 +39,7 @@
         .card.active { border-color: #f2a900; background: #2d2612; }
         .card img { width: 100%; height: 65px; object-fit: contain; margin-bottom: 5px; border-radius: 4px; background: #fff; padding: 2px; }
         .card b { display: block; font-size: 14px; margin-bottom: 3px; }
-        .card span { font-size: 11px; color: #aaa; }
+        .card span { font-size: 11px; color: #aaa; display: block; margin-top: 2px; }
         .form-group { margin-bottom: 12px; }
         label { font-size: 12px; color: #aaa; display: block; margin-bottom: 4px; }
         input, select, textarea { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #444; background: #121212; color: #fff; font-size: 14px; }
@@ -88,11 +88,13 @@
             <img src="egea.jpg" alt="Sarı Taksi">
             <b id="lblTaxiName">Sarı taksi</b>
             <span id="lblTaxiCap">Maks. 4 Kişi</span>
+            <span id="lblTaxiLug" style="color: #f2a900; font-weight: bold;">🧳 3 Büyük - 5 Normal</span>
         </div>
         <div class="card" id="cVito" onclick="setV('VITO')">
             <img src="vito.jpg" alt="Vito">
             <b id="lblVitoName">Vito</b>
             <span id="lblVitoCap">Maks. 7 Kişi</span>
+            <span id="lblVitoLug" style="color: #f2a900; font-weight: bold;">🧳 8 Büyük - 10 Normal</span>
         </div>
     </div>
 
@@ -143,7 +145,7 @@
         <input type="text" id="txtFlight" placeholder="Gerçek uçuş kodunu giriniz">
     </div>
 
-    <!-- Ödeme Şekli (Döviz Bilgisi Eklendi) -->
+    <!-- Ödeme Şekli -->
     <div class="form-group">
         <label id="lblPay">Ödeme Şekli / Payment *:</label>
         <select id="selPay" onchange="calc()">
@@ -216,110 +218,110 @@
     const translations = {
         TR: {
             title: "Airport Transfer & Taxi", sub: "7/24 Güvenli Rezervasyon Masası",
-            taxiName: "Sarı taksi", taxiCap: "Maks. 4 Kişi", vitoName: "Vito", vitoCap: "Maks. 7 Kişi",
+            taxiName: "Sarı taksi", taxiCap: "Maks. 4 Kişi", taxiLug: "🧳 3 Büyük - 5 Normal", vitoName: "Vito", vitoCap: "Maks. 7 Kişi", vitoLug: "🧳 8 Büyük - 10 Normal",
             dir: "Transfer Yönü:", optDir1: "Havalimanı ➔ Otel (Karşılama Dahil +200₺)", optDir2: "Otel ➔ Havalimanı",
             ap: "Havalimanı:", hotel: "Otel Adı:", room: "Oda No:", pax: "Kişi Sayısı:", name: "Misafir Adı Soyadı:",
             flight: "Uçuş Kodu (Örn: TK1982) *:", pay: "Ödeme Şekli (Araçta Ödeme):", optCash: "Araçta Nakit Ödeme (TL / USD $ / EUR €)",
             optCard: "Araçta Kredi Kartı (+%10 Komisyon)", time: "Transfer Tarihi & Saati:", noteInput: "Özel İstek / Notlar (Opsiyonel):", priceTitle: "HESAPLANAN TOPLAM TUTAR",
             btnSend: "WHATSAPP İLE KESİN REZERVASYON GÖNDER", note: "Ödeme doğrudan sürücüye araç içerisinde yapılacaktır. (TL, USD, EUR geçerlidir).", paxText: "Kişi",
             musicOff: "🎵 Müzik: Kapalı", musicOn: "🎵 Müzik: Açık",
-            msgTitle: "🚨 YENİ TRANSFER REZERVASYONU", msgCar: "Araç", msgDir: "Yön", msgAp: "Havalimanı", msgHotel: "Otel",
+            msgTitle: "🚨 YENİ TRANSFER REZERVASYONU", msgCar: "Araç", msgLug: "Bagaj", msgDir: "Yön", msgAp: "Havalimanı", msgHotel: "Otel",
             msgGuest: "Misafir", msgFlight: "Uçuş Kodu", msgTime: "Tarih/Saat", msgPay: "Ödeme", msgExtra: "Not", msgTotal: "Tutar", msgConfirmed: "Müşteri tarafından onaylanmıştır."
         },
         EN: {
             title: "Airport Transfer & Taxi", sub: "24/7 Secure Booking Desk",
-            taxiName: "Yellow taxi", taxiCap: "Max. 4 Persons", vitoName: "Vito", vitoCap: "Max. 7 Persons",
+            taxiName: "Yellow taxi", taxiCap: "Max. 4 Persons", taxiLug: "🧳 3 Large - 5 Normal", vitoName: "Vito", vitoCap: "Max. 7 Persons", vitoLug: "🧳 8 Large - 10 Normal",
             dir: "Transfer Direction:", optDir1: "Airport ➔ Hotel (Meet & Greet +200₺)", optDir2: "Hotel ➔ Airport",
             ap: "Airport:", hotel: "Hotel Name:", room: "Room No:", pax: "Number of Pax:", name: "Guest Full Name:",
             flight: "Flight Code (e.g. TK1982) *:", pay: "Payment Method (Pay in Car):", optCash: "Cash in Car (TRY / USD $ / EUR €)",
             optCard: "Credit Card in Car (+10% Commission)", time: "Transfer Date & Time:", noteInput: "Special Request / Notes (Optional):", priceTitle: "ESTIMATED TOTAL PRICE",
             btnSend: "SEND SECURE BOOKING VIA WHATSAPP", note: "Payment directly to driver (TRY, USD, EUR accepted).", paxText: "Persons",
             musicOff: "🎵 Music: Off", musicOn: "🎵 Music: On",
-            msgTitle: "🚨 NEW TRANSFER BOOKING", msgCar: "Vehicle", msgDir: "Direction", msgAp: "Airport", msgHotel: "Hotel",
+            msgTitle: "🚨 NEW TRANSFER BOOKING", msgCar: "Vehicle", msgLug: "Luggage", msgDir: "Direction", msgAp: "Airport", msgHotel: "Hotel",
             msgGuest: "Guest", msgFlight: "Flight Code", msgTime: "Date/Time", msgPay: "Payment", msgExtra: "Note", msgTotal: "Total", msgConfirmed: "Confirmed by the guest."
         },
         RU: {
             title: "Трансфер и Такси", sub: "Круглосуточная служба бронирования",
-            taxiName: "Желтое такси", taxiCap: "Макс. 4 чел.", vitoName: "Vito", vitoCap: "Макс. 7 чел.",
+            taxiName: "Желтое такси", taxiCap: "Макс. 4 чел.", taxiLug: "🧳 3 Больших - 5 Нормальных", vitoName: "Vito", vitoCap: "Макс. 7 чел.", vitoLug: "🧳 8 Больших - 10 Нормальных",
             dir: "Направление трансфера:", optDir1: "Аэропорт ➔ Отель (Встреча +200₺)", optDir2: "Отель ➔ Аэропорт",
             ap: "Аэропорт:", hotel: "Название отеля:", room: "Номер комнаты:", pax: "Количество гостей:", name: "Имя Фамилия гостя:",
             flight: "Код рейса (напр. TK1982) *:", pay: "Способ оплаты:", optCash: "Наличными (TRY / USD $ / EUR €)",
             optCard: "Кредитной картой (+10% комиссия)", time: "Дата и время трансфера:", noteInput: "Особые пожелания (необязательно):", priceTitle: "РАССЧИТАННАЯ СУММА",
             btnSend: "ОТПРАВИТЬ БРОНЬ В WHATSAPP", note: "Оплата водителю (принимаются TRY, USD, EUR).", paxText: "чел.",
             musicOff: "🎵 Музыка: Выкл", musicOn: "🎵 Музыка: Вкл",
-            msgTitle: "🚨 НОВОЕ БРОНИРОВАНИЕ ТРАНСФЕРА", msgCar: "Автомобиль", msgDir: "Направление", msgAp: "Аэропорт", msgHotel: "Отель",
+            msgTitle: "🚨 НОВОЕ БРОНИРОВАНИЕ ТРАНСФЕРА", msgCar: "Автомобиль", msgLug: "Багаж", msgDir: "Направление", msgAp: "Аэропорт", msgHotel: "Отель",
             msgGuest: "Гость", msgFlight: "Код рейса", msgTime: "Дата/Время", msgPay: "Оплата", msgExtra: "Примечание", msgTotal: "Итого", msgConfirmed: "Подтверждено гостем."
         },
         AR: {
             title: "خدمة التوصيل", sub: "حجز مباشر آمن على مدار 24 ساعة",
-            taxiName: "تاكسي أصفر", taxiCap: "الحد الأقصى 4 أشخاص", vitoName: "فيتو", vitoCap: "الحد الأقصى 7 أشخاص",
+            taxiName: "تاكسي أصفر", taxiCap: "الحد الأقصى 4 أشخاص", taxiLug: "🧳 3 كبير - 5 عادي", vitoName: "فيتو", vitoCap: "الحد الأقصى 7 أشخاص", vitoLug: "🧳 8 كبير - 10 عادي",
             dir: "اتجاه النقل:", optDir1: "المطار ➔ الفندق (شامل الاستقبال +200₺)", optDir2: "الفندق ➔ المطار",
             ap: "المطار:", hotel: "اسم الفندق:", room: "رقم الغرفة:", pax: "عدد الأفراد:", name: "اسم الضيف بالكامل:",
             flight: "رمز الرحلة (مثال: TK1982) *:", pay: "طريقة الدفع:", optCash: "نقداً في السيارة (TRY / USD $ / EUR €)",
             optCard: "بطاقة ائتمان (+10% عمولة)", time: "تاريخ ووقت النقل:", noteInput: "طلبات خاصة (اختياري):", priceTitle: "السعر الإجمالي المقدر",
             btnSend: "إرسال الحجز عبر واتساب", note: "الدفع للسائق (يقبل العملات الأجنبية الدولار واليورو).", paxText: "أشخاص",
             musicOff: "🎵 الموسيقى: متوقف", musicOn: "🎵 الموسيقى: تشغيل",
-            msgTitle: "🚨 حجز نقل جديد", msgCar: "المركبة", msgDir: "الأتجاه", msgAp: "المطار", msgHotel: "الفندق",
+            msgTitle: "🚨 حجز نقل جديد", msgCar: "المركبة", msgLug: "الأمتعة", msgDir: "الأتجاه", msgAp: "المطار", msgHotel: "الفندق",
             msgGuest: "الضيف", msgFlight: "رمز الرحلة", msgTime: "التاريخ/الوقت", msgPay: "الدفع", msgExtra: "ملاحظة", msgTotal: "المجموع", msgConfirmed: "تم التأكيد من قبل الضيف."
         },
         ES: {
             title: "Transfer y Taxi", sub: "Servicio de reservas 24/7",
-            taxiName: "Taxi Amarillo", taxiCap: "Máx. 4 Personas", vitoName: "Vito", vitoCap: "Máx. 7 Personas",
+            taxiName: "Taxi Amarillo", taxiCap: "Máx. 4 Personas", taxiLug: "🧳 3 Grandes - 5 Normales", vitoName: "Vito", vitoCap: "Máx. 7 Personas", vitoLug: "🧳 8 Grandes - 10 Normales",
             dir: "Dirección:", optDir1: "Aeropuerto ➔ Hotel (Incluye Recogida +200₺)", optDir2: "Hotel ➔ Aeropuerto",
             ap: "Aeropuerto:", hotel: "Nombre del Hotel:", room: "Núm. de Habitación:", pax: "Número de Pasajeros:", name: "Nombre Completo:",
             flight: "Código de Vuelo (ej. TK1982) *:", pay: "Método de Pago:", optCash: "Efectivo (TRY / USD $ / EUR €)",
             optCard: "Tarjeta de Crédito (+10% comisión)", time: "Fecha y Hora:", noteInput: "Nota especial (Opcional):", priceTitle: "PRECIO TOTAL ESTIMADO",
             btnSend: "ENVIAR RESERVA POR WHATSAPP", note: "Pago al conductor (Se acepta TRY, USD, EUR).", paxText: "Personas",
             musicOff: "🎵 Música: Apagada", musicOn: "🎵 Música: Encendida",
-            msgTitle: "🚨 NUEVA RESERVA DE TRANSFER", msgCar: "Vehículo", msgDir: "Dirección", msgAp: "Aeropuerto", msgHotel: "Hotel",
+            msgTitle: "🚨 NUEVA RESERVA DE TRANSFER", msgCar: "Vehículo", msgLug: "Equipaje", msgDir: "Dirección", msgAp: "Aeropuerto", msgHotel: "Hotel",
             msgGuest: "Huésped", msgFlight: "Vuelo", msgTime: "Fecha/Hora", msgPay: "Pago", msgExtra: "Nota", msgTotal: "Total", msgConfirmed: "Confirmado por el huésped."
         },
         IT: {
             title: "Transfer e Taxi", sub: "Servizio prenotazioni 24/7",
-            taxiName: "Taxi Giallo", taxiCap: "Max. 4 Persone", vitoName: "Vito", vitoCap: "Max. 7 Persone",
+            taxiName: "Taxi Giallo", taxiCap: "Max. 4 Persone", taxiLug: "🧳 3 Grandi - 5 Normali", vitoName: "Vito", vitoCap: "Max. 7 Persone", vitoLug: "🧳 8 Grandi - 10 Normali",
             dir: "Direzione:", optDir1: "Aeroporto ➔ Hotel (Incontro +200₺)", optDir2: "Hotel ➔ Aeroporto",
             ap: "Aeroporto:", hotel: "Nome Hotel:", room: "N. Camera:", pax: "Numero Passeggeri:", name: "Nome e Cognome:",
             flight: "Codice Volo (es. TK1982) *:", pay: "Metodo di Pagamento:", optCash: "Contanti (TRY / USD $ / EUR €)",
             optCard: "Carta di Credito (+10% commissione)", time: "Data e Ora:", noteInput: "Note speciali (Opzionale):", priceTitle: "PREZZO TOTALE STIMATO",
             btnSend: "INVIA PRENOTAZIONE VIA WHATSAPP", note: "Pagamento all'autista (Accettati TRY, USD, EUR).", paxText: "Persone",
             musicOff: "🎵 Musica: Spenta", musicOn: "🎵 Musica: Accesa",
-            msgTitle: "🚨 NUOVA PRENOTAZIONE", msgCar: "Veicolo", msgDir: "Direzione", msgAp: "Aeroporto", msgHotel: "Hotel",
+            msgTitle: "🚨 NUOVA PRENOTAZIONE", msgCar: "Veicolo", msgLug: "Bagagli", msgDir: "Direzione", msgAp: "Aeroporto", msgHotel: "Hotel",
             msgGuest: "Ospite", msgFlight: "Volo", msgTime: "Data/Ora", msgPay: "Pagamento", msgExtra: "Nota", msgTotal: "Totale", msgConfirmed: "Confermato dall'ospite."
         },
         FR: {
             title: "Transfert et Taxi", sub: "Service de réservation 24/7",
-            taxiName: "Taxi Jaune", taxiCap: "Max. 4 Personnes", vitoName: "Vito", vitoCap: "Max. 7 Personnes",
+            taxiName: "Taxi Jaune", taxiCap: "Max. 4 Personnes", taxiLug: "🧳 3 Grands - 5 Normaux", vitoName: "Vito", vitoCap: "Max. 7 Personnes", vitoLug: "🧳 8 Grands - 10 Normaux",
             dir: "Direction:", optDir1: "Aéroport ➔ Hôtel (Accueil +200₺)", optDir2: "Hôtel ➔ Aéroport",
             ap: "Aéroport:", hotel: "Nom de l'Hôtel:", room: "N° de Chambre:", pax: "Nombre de Passagers:", name: "Nom et Prénom:",
             flight: "Code de Vol (ex. TK1982) *:", pay: "Mode de Paiement:", optCash: "Espèces (TRY / USD $ / EUR €)",
             optCard: "Carte de Crédit (+10% commission)", time: "Date et Heure:", noteInput: "Note spéciale (Optionnel):", priceTitle: "PRIX TOTAL ESTIMÉ",
             btnSend: "ENVOYER LA RÉSERVATION VIA WHATSAPP", note: "Paiement au chauffeur (TRY, USD, EUR acceptés).", paxText: "Personnes",
             musicOff: "🎵 Musique: Off", musicOn: "🎵 Musique: On",
-            msgTitle: "🚨 NOUVELLE RÉSERVATION", msgCar: "Véhicule", msgDir: "Direction", msgAp: "Aéroport", msgHotel: "Hôtel",
+            msgTitle: "🚨 NOUVELLE RÉSERVATION", msgCar: "Véhicule", msgLug: "Bagages", msgDir: "Direction", msgAp: "Aéroport", msgHotel: "Hôtel",
             msgGuest: "Invité", msgFlight: "Vol", msgTime: "Date/Heure", msgPay: "Paiement", msgExtra: "Remarque", msgTotal: "Total", msgConfirmed: "Confirmé par l'invité."
         },
         DE: {
             title: "Transfer & Taxi", sub: "24/7 Buchungsservice",
-            taxiName: "Gelbes Taxi", taxiCap: "Max. 4 Personen", vitoName: "Vito", vitoCap: "Max. 7 Personen",
+            taxiName: "Gelbes Taxi", taxiCap: "Max. 4 Personen", taxiLug: "🧳 3 Große - 5 Normale", vitoName: "Vito", vitoCap: "Max. 7 Personen", vitoLug: "🧳 8 Große - 10 Normale",
             dir: "Richtung:", optDir1: "Flughafen ➔ Hotel (Abholung +200₺)", optDir2: "Hotel ➔ Flughafen",
             ap: "Flughafen:", hotel: "Hotelname:", room: "Zimmernummer:", pax: "Anzahl der Personen:", name: "Vollständiger Name:",
             flight: "Flugnummer (z.B. TK1982) *:", pay: "Zahlungsmethode:", optCash: "Barzahlung (TRY / USD $ / EUR €)",
             optCard: "Kreditkarte (+10% Gebühr)", time: "Datum & Uhrzeit:", noteInput: "Besondere Wünsche (Optional):", priceTitle: "GESAMTPREIS",
             btnSend: "BUCHUNG PER WHATSAPP SENDEN", note: "Zahlung an den Fahrer (TRY, USD, EUR möglich).", paxText: "Personen",
             musicOff: "🎵 Musik: Aus", musicOn: "🎵 Musik: An",
-            msgTitle: "🚨 NEUE BUCHUNG", msgCar: "Fahrzeug", msgDir: "Richtung", msgAp: "Flughafen", msgHotel: "Hotel",
+            msgTitle: "🚨 NEUE BUCHUNG", msgCar: "Fahrzeug", msgLug: "Gepäck", msgDir: "Richtung", msgAp: "Flughafen", msgHotel: "Hotel",
             msgGuest: "Gast", msgFlight: "Flug", msgTime: "Datum/Uhrzeit", msgPay: "Zahlung", msgExtra: "Notiz", msgTotal: "Gesamt", msgConfirmed: "Vom Gast bestätigt."
         },
         ZH: {
             title: "机场接送与出租车", sub: "24/7 安全预订服务",
-            taxiName: "黄色出租车", taxiCap: "最多 4 人", vitoName: "威霆", vitoCap: "最多 7 人",
+            taxiName: "黄色出租车", taxiCap: "最多 4 人", taxiLug: "🧳 3大 - 5普", vitoName: "威霆", vitoCap: "最多 7 人", vitoLug: "🧳 8大 - 10普",
             dir: "接送方向:", optDir1: "机场 ➔ 酒店 (含接机 +200₺)", optDir2: "酒店 ➔ 机场",
             ap: "机场:", hotel: "酒店名称:", room: "房间号:", pax: "人数:", name: "客人姓名:",
             flight: "航班号 (例如 TK1982) *:", pay: "支付方式:", optCash: "车内现金 (支持 TRY / USD $ / EUR €)",
-            optCard: "车内信用卡支付 (+10% 手续费)", time: "接送日期与时间:", noteInput: "特殊要求 / 备注 (可选):", priceTitle: "预计总价",
+            optCard: "车内信用卡支付 (+10% 手续费)", time: "接送日期与时间:", priceTitle: "预计总价",
             btnSend: "通过 WHATSAPP 发送预订", note: "直接付给司机 (支持 TL, 美元, 欧元)。", paxText: "人",
             musicOff: "🎵 音乐: 关闭", musicOn: "🎵 音乐: 开启",
-            msgTitle: "🚨 新的接送预订", msgCar: "车型", msgDir: "方向", msgAp: "机场", msgHotel: "酒店",
+            msgTitle: "🚨 新的接送预订", msgCar: "车型", msgLug: "行李", msgDir: "方向", msgAp: "机场", msgHotel: "酒店",
             msgGuest: "客人", msgFlight: "航班号", msgTime: "日期/时间", msgPay: "支付", msgExtra: "备注", msgTotal: "总计", msgConfirmed: "已由客人确认。"
         }
     };
@@ -336,8 +338,10 @@
         document.getElementById('lblSub').innerText = t.sub;
         document.getElementById('lblTaxiName').innerText = t.taxiName;
         document.getElementById('lblTaxiCap').innerText = t.taxiCap;
+        document.getElementById('lblTaxiLug').innerText = t.taxiLug;
         document.getElementById('lblVitoName').innerText = t.vitoName;
         document.getElementById('lblVitoCap').innerText = t.vitoCap;
+        document.getElementById('lblVitoLug').innerText = t.vitoLug;
         document.getElementById('lblDir').innerText = t.dir;
         document.getElementById('optDir1').innerText = t.optDir1;
         document.getElementById('optDir2').innerText = t.optDir2;
@@ -433,9 +437,10 @@
         
         const vEmoji = vehicle === 'TAXI' ? '🚖' : '🚙';
         const vName = vehicle === 'TAXI' ? (currentLang==='TR'?'Sarı taksi':'Yellow taxi') : 'Vito';
+        const luggageText = vehicle === 'TAXI' ? '3 Büyük - 5 Normal Valiz' : '8 Büyük - 10 Normal Valiz';
 
         let msg = `🚨 *YENİ TRANSFER REZERVASYONU*\n\n` +
-                  `${vEmoji} *${t.msgCar}:*  ${vName}\n` +
+                  `${vEmoji} *${t.msgCar}:*  ${vName} (${luggageText})\n` +
                   `🗺️ *${t.msgDir}:*  ${dirText}\n` +
                   `✈️ *${t.msgAp}:*  ${ap}\n` +
                   `🏨 *${t.msgHotel}:*  ${hotel} (Room: ${room})\n` +
