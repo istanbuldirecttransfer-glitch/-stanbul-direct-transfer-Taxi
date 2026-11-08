@@ -40,6 +40,9 @@
 </head>
 <body>
 
+<!-- Arka Plan Müzik Çalar (Otomatik Oynatma ve Döngü) -->
+<audio id="bgMusic" src="Regard-Ride-It.mp3" loop></audio>
+
 <div class="container">
     <!-- Sağ Üst Dil Menüsü -->
     <div class="menu-container">
@@ -141,7 +144,7 @@
     <!-- Fiyat Gösterimi -->
     <div class="price-box">
         <div class="price-title" id="lblPriceTitle">HESAPLANAN TOPLAM TUTAR</div>
-        <div class="price-amount" id="txtPrice">1600 ₺</div>
+        <div class="price-amount" id="txtPrice">2200 ₺</div>
     </div>
 
     <button class="btn" id="btnSend" onclick="send()">WHATSAPP İLE KESİN REZERVASYON GÖNDER</button>
@@ -270,10 +273,10 @@
         }
     };
 
-    // Güncellenmiş Sarı Taksi (IST: 1600, SAW: 1800) ve Vito fiyatları
+    // Güncellenmiş nakit bazlı fiyatlar: IST 2200₺, SAW 2500₺ (Hem Taksi hem Vito için eşitlendi)
     const basePrices = {
-        TAXI: { IST: 1600, SAW: 1800 },
-        VITO: { IST: 2000, SAW: 2200 }
+        TAXI: { IST: 2200, SAW: 2500 },
+        VITO: { IST: 2200, SAW: 2500 }
     };
 
     function changeLang(lang) {
@@ -391,7 +394,6 @@
                     `💰 *${t.msgTotal}:*  ${price}\n\n` +
                     `_${t.msgConfirmed}_`;
 
-        // Belirttiğin WhatsApp numarasına otomatik yönlendirme
         window.open(`https://wa.me/905521679703?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
@@ -399,6 +401,17 @@
         const n = new Date();
         n.setMinutes(n.getMinutes() - n.getTimezoneOffset());
         document.getElementById('txtTime').value = n.toISOString().slice(0, 16);
+        
+        // Sayfa yüklendiğinde müziği çalmayı dene (Tarayıcı izin politikalarına takılırsa kullanıcı herhangi bir yere tıkladığında çalmaya başlar)
+        const bgMusic = document.getElementById('bgMusic');
+        bgMusic.volume = 0.4; // Ses seviyesi dengeli olsun
+        bgMusic.play().catch(error => {
+            console.log("Tarayıcı otomatik oynatmayı engelledi, ilk etkileşimde çalacak.");
+            document.addEventListener('click', () => {
+                bgMusic.play();
+            }, { once: true });
+        });
+
         changeLang('TR');
         calc();
     }
